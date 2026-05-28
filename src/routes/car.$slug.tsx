@@ -124,15 +124,36 @@ function CarPage() {
         {/* SPECS */}
         <section className="bg-muted/30 py-12">
           <div className="container mx-auto px-4">
-            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Технические характеристики</h2>
-            <div className="grid gap-x-8 gap-y-3 rounded-xl bg-background p-6 shadow-sm sm:grid-cols-2 md:grid-cols-3">
-              {car.specs.map((s) => (
-                <div key={s.label} className="flex items-baseline justify-between gap-4 border-b border-dashed py-2 last:border-0">
-                  <span className="text-sm text-muted-foreground">{s.label}</span>
-                  <span className="text-sm font-medium">{s.value}</span>
-                </div>
-              ))}
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold md:text-3xl">Технические характеристики</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {car.name} · {new Date().getFullYear()}
+              </p>
             </div>
+            <Tabs defaultValue={car.specGroups[0].label} className="w-full">
+              <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 bg-background p-1">
+                {car.specGroups.map((g) => (
+                  <TabsTrigger key={g.label} value={g.label} className="text-xs md:text-sm">
+                    {g.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              {car.specGroups.map((g) => (
+                <TabsContent key={g.label} value={g.label}>
+                  <div className="grid gap-x-8 gap-y-1 rounded-xl bg-background p-6 shadow-sm sm:grid-cols-2">
+                    {g.items.map((s) => (
+                      <div
+                        key={s.label}
+                        className="flex items-baseline justify-between gap-4 border-b border-dashed py-2.5 last:border-0 sm:[&:nth-last-child(2)]:border-0"
+                      >
+                        <span className="text-sm text-muted-foreground">{s.label}</span>
+                        <span className="text-right text-sm font-medium">{s.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
           </div>
         </section>
 
