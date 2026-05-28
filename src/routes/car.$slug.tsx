@@ -8,7 +8,7 @@ import { LeadDialog } from "@/components/LeadDialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
-import { getCarBySlug } from "@/lib/cars";
+import { getCarBySlug, type Car } from "@/lib/cars";
 import { CheckCircle2, Phone, Calendar } from "lucide-react";
 import { useState } from "react";
 
