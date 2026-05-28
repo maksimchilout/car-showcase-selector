@@ -34,7 +34,7 @@ export function Pano360({ frames }: { frames: string[] }) {
   const progress = Math.round((loaded / frames.length) * 100);
 
   return (
-    <div className="relative w-full overflow-hidden rounded-xl bg-muted">
+    <div className="relative w-full overflow-hidden bg-black">
       <div
         ref={ref}
         className="relative aspect-[4/3] w-full cursor-grab touch-none select-none active:cursor-grabbing"
@@ -54,13 +54,13 @@ export function Pano360({ frames }: { frames: string[] }) {
             loading={i === 0 ? "eager" : "lazy"}
           />
         ))}
-        <div className="pointer-events-none absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-background/80 px-3 py-1.5 text-xs text-foreground shadow backdrop-blur">
-          <RotateCw className="h-3.5 w-3.5" />
-          Перетащите для вращения • {index + 1}/{frames.length}
+        <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/70 px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-foreground backdrop-blur-xl">
+          <RotateCw className="h-3 w-3 text-[#C9A84C]" />
+          Перетащите · {index + 1}/{frames.length}
         </div>
         {progress < 100 && (
-          <div className="absolute inset-x-0 top-0 h-1 bg-muted">
-            <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />
+          <div className="absolute inset-x-0 top-0 h-px bg-white/10">
+            <div className="h-full bg-[#C9A84C] transition-all" style={{ width: `${progress}%` }} />
           </div>
         )}
       </div>
