@@ -37,7 +37,7 @@ export const Route = createFileRoute("/car/$slug")({
 });
 
 function CarPage() {
-  const { car } = Route.useLoaderData();
+  const { car } = Route.useLoaderData() as { car: Car };
   const [activeImg, setActiveImg] = useState(0);
 
   return (
