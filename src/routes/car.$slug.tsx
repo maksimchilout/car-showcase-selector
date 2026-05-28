@@ -13,7 +13,7 @@ import { CheckCircle2, Phone, Calendar } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/car/$slug")({
-  loader: ({ params }) => {
+  loader: ({ params }): { car: NonNullable<ReturnType<typeof getCarBySlug>> } => {
     const car = getCarBySlug(params.slug);
     if (!car) throw notFound();
     return { car };
