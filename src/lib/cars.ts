@@ -462,6 +462,7 @@ export const CARS: Car[] = [
       { title: "Всё включено", text: "360° камера, массаж водительского кресла, полуавтоматическая парковка, многоцветная атмосферная подсветка — вся инновационная начинка уже в комплектации." },
     ],
   },
+];
 
 export function getCarBySlug(slug: string): Car | undefined {
   return CARS.find((c) => c.slug === slug);
