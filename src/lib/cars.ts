@@ -20,6 +20,7 @@ export type Car = {
   specs: CarSpec[];
   specGroups: SpecGroup[];
   highlights: { title: string; text: string }[];
+  reasons: { title: string; text: string }[];
 };
 
 const ids = carImages as Record<string, { panovr: string[]; gallery: string[] }>;
