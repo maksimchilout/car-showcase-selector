@@ -259,6 +259,37 @@ function CarPage() {
           </div>
         </section>
 
+        <div className="divider-thin container mx-auto" />
+
+        {/* WHY CHOOSE */}
+        <section className="container mx-auto px-6 py-32">
+          <div className="reveal mb-16">
+            <div className="eyebrow">05 — Почему Citroën</div>
+            <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
+              {car.name} — <span className="italic text-[#C9A84C]">ваш лучший выбор</span>
+            </h2>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            {car.reasons.map((r, i) => (
+              <div
+                key={r.title}
+                className="reveal glass glass-hover rounded-2xl p-10"
+                style={{ transitionDelay: `${i * 100}ms` }}
+              >
+                <div className="flex items-start gap-6">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#C9A84C]/30 bg-[#C9A84C]/10 text-[#C9A84C] font-serif text-xl">
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-2xl tracking-wide">{r.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{r.text}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* CTA */}
         <section className="container mx-auto px-6 pb-32">
           <div className="reveal glass relative overflow-hidden rounded-3xl px-8 py-20 text-center md:px-16 md:py-28">
