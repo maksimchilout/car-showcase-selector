@@ -1,20 +1,29 @@
 import { Link } from "@tanstack/react-router";
-import { Phone, MapPin, Menu, X } from "lucide-react";
+import { MapPin, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CARS } from "@/lib/cars";
+import { CitroenLogo } from "@/components/CitroenLogo";
+import { PhoneLinks } from "@/components/PhoneLinks";
+import { ELECTRO_CAR_URL, YANDEX_ROUTE_URL } from "@/lib/contact";
 
-function CitroenLogo({ className = "h-7 w-10" }: { className?: string }) {
+function AddressBlock({ className = "", compact = false }: { className?: string; compact?: boolean }) {
   return (
-    <svg viewBox="0 0 64 32" className={className} aria-label="Citroën">
-      <defs>
-        <linearGradient id="cg" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor="#E8CE7F" />
-          <stop offset="100%" stopColor="#9A7F37" />
-        </linearGradient>
-      </defs>
-      <path d="M2 22 L18 6 L34 22 L29 22 L18 11 L7 22 Z" fill="url(#cg)" />
-      <path d="M30 22 L46 6 L62 22 L57 22 L46 11 L35 22 Z" fill="url(#cg)" />
-    </svg>
+    <div className={`flex flex-col gap-0.5 ${className}`}>
+      <span className="flex items-center gap-2 tracking-wider text-muted-foreground">
+        <MapPin className={`shrink-0 text-[#C9A84C] ${compact ? "h-4 w-4" : "h-3.5 w-3.5"}`} />
+        ул. Свердлова, 23/4-1
+      </span>
+      <a
+        href={YANDEX_ROUTE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`uppercase tracking-[0.15em] text-muted-foreground transition-colors hover:text-[#C9A84C] ${
+          compact ? "text-xs" : "pl-5 text-[0.65rem]"
+        }`}
+      >
+        Построить маршрут
+      </a>
+    </div>
   );
 }
 
@@ -38,12 +47,27 @@ export function Header() {
       }`}
     >
       <div className="container mx-auto flex h-20 items-center justify-between gap-6 px-6">
-        <Link to="/" className="flex items-center gap-3">
-          <CitroenLogo />
-          <span className="font-serif text-2xl tracking-[0.18em] text-foreground">
-            CITROËN
-          </span>
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link to="/" className="flex items-center gap-3">
+            <CitroenLogo />
+            <span className="font-serif text-2xl tracking-[0.18em] text-foreground">
+              CITROËN
+            </span>
+          </Link>
+          <a
+            href={ELECTRO_CAR_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 opacity-90 transition-opacity hover:opacity-100"
+            aria-label="Electro-car.by"
+          >
+            <img
+              src="/logo.png"
+              alt="Electro-car.by"
+              className="h-8 w-auto object-contain sm:h-9"
+            />
+          </a>
+        </div>
 
         <nav className="hidden items-center gap-10 lg:flex">
           {CARS.map((c) => (
@@ -60,12 +84,8 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-6 text-xs text-muted-foreground md:flex">
-          <a className="flex items-center gap-2 tracking-wider transition-colors hover:text-[#C9A84C]" href="tel:+375291234567">
-            <Phone className="h-3.5 w-3.5" /> +375 (29) 123-45-67
-          </a>
-          <span className="hidden items-center gap-2 tracking-wider xl:flex">
-            <MapPin className="h-3.5 w-3.5" /> ул. Свердлова, 23/4-1
-          </span>
+          <PhoneLinks />
+          <AddressBlock className="hidden xl:flex" />
         </div>
 
         <button
@@ -91,12 +111,8 @@ export function Header() {
                 {c.name}
               </Link>
             ))}
-            <a href="tel:+375291234567" className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-              <Phone className="h-4 w-4" /> +375 (29) 123-45-67
-            </a>
-            <span className="flex items-center gap-2 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4" /> ул. Свердлова, 23/4-1
-            </span>
+            <PhoneLinks compact className="mt-2" iconClassName="h-4 w-4 shrink-0 text-[#C9A84C]" />
+            <AddressBlock compact />
           </div>
         </div>
       )}
