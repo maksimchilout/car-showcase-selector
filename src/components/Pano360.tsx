@@ -104,7 +104,7 @@ export function Pano360({ frames, colors }: Pano360Props) {
         )}
 
         {showColorPicker && (
-          <div className="pointer-events-auto absolute bottom-16 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 rounded-full border border-white/10 bg-black/70 px-4 py-2.5 backdrop-blur-xl">
+          <div className="pointer-events-auto absolute right-12 top-1/2 z-20 flex -translate-y-1/2 flex-col items-center gap-2.5">
             {colorOptions.map((color) => {
               const isActive = color.id === colorId;
               return (
@@ -118,14 +118,15 @@ export function Pano360({ frames, colors }: Pano360Props) {
                     e.stopPropagation();
                     setColorId(color.id);
                   }}
-                  className={`relative h-8 w-8 shrink-0 rounded-full transition-all ${
-                    isActive
-                      ? "ring-2 ring-[#C9A84C] ring-offset-2 ring-offset-black/80"
-                      : "opacity-80 hover:opacity-100"
-                  }`}
+                  className="group relative h-[1.8rem] w-[1.8rem] shrink-0 cursor-pointer rounded-full p-0"
                   style={{ backgroundColor: color.hex }}
                 >
-                  <span className="absolute inset-0 rounded-full border border-black/20" />
+                  <span
+                    className={`pointer-events-none absolute -inset-0.5 rounded-full border-2 border-[#C9A84C] transition-opacity duration-500 ease-in-out ${
+                      isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                    }`}
+                  />
+                  <span className="pointer-events-none absolute inset-0 rounded-full border border-black/25 shadow-sm" />
                 </button>
               );
             })}

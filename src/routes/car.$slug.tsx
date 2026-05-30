@@ -4,14 +4,14 @@ import { Footer } from "@/components/Footer";
 import { Background } from "@/components/Background";
 import { CarSwitcher } from "@/components/CarSwitcher";
 import { Pano360 } from "@/components/Pano360";
-import { VRSalon } from "@/components/VRSalon";
+import { useVRSalonPreload, VRSalon } from "@/components/VRSalon";
 import { LeadDialog } from "@/components/LeadDialog";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CarGallery } from "@/components/CarGallery";
+import { CarSpecsPanel, CarSpecsRoot, CarSpecsTabs } from "@/components/CarSpecs";
 import { getCarBySlug, getGalleryCategories, type Car } from "@/lib/cars";
 import { Phone, Calendar, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useReveal } from "@/hooks/use-reveal";
 
 export const Route = createFileRoute("/car/$slug")({
@@ -29,6 +29,10 @@ export const Route = createFileRoute("/car/$slug")({
         { property: "og:title", content: car?.name ?? "Citroën" },
         { property: "og:description", content: car?.description ?? "" },
         { property: "og:image", content: car?.hero ?? "" },
+      ],
+      links: [
+        { rel: "preconnect", href: "https://pano.autohome.com.cn" },
+        { rel: "dns-prefetch", href: "https://pano.autohome.com.cn" },
       ],
     };
   },
@@ -70,6 +74,8 @@ function FlatGallery({ images, carName }: { images: string[]; carName: string })
 function CarPage() {
   const { car } = Route.useLoaderData() as { car: Car };
   const galleryCategories = getGalleryCategories(car.galleryAlbums);
+  const specsSectionRef = useRef<HTMLElement>(null);
+  useVRSalonPreload(car.panoId, car.vrSalonSrc);
   useReveal();
 
   return (
@@ -217,7 +223,10 @@ function CarPage() {
         <div className="divider-thin container mx-auto" />
 
         {/* SPECS */}
-        <section className="container mx-auto px-6 py-32">
+        <section
+          ref={specsSectionRef}
+          className="container mx-auto scroll-mt-28 px-6 py-32"
+        >
           <div className="reveal mb-12 text-center">
             <div className="eyebrow">— Спецификация —</div>
             <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
@@ -227,36 +236,14 @@ function CarPage() {
               {car.name} · {new Date().getFullYear()}
             </p>
           </div>
-          <div className="reveal glass rounded-2xl p-6 md:p-10">
-            <Tabs defaultValue={car.specGroups[0].label} className="w-full">
-              <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 border border-white/[0.06] bg-black/30 p-1">
-                {car.specGroups.map((g) => (
-                  <TabsTrigger
-                    key={g.label}
-                    value={g.label}
-                    className="text-xs tracking-wider data-[state=active]:bg-[#C9A84C] data-[state=active]:text-black md:text-sm"
-                  >
-                    {g.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              {car.specGroups.map((g) => (
-                <TabsContent key={g.label} value={g.label} className="mt-8">
-                  <div className="grid gap-x-12 gap-y-1 sm:grid-cols-2">
-                    {g.items.map((s) => (
-                      <div
-                        key={s.label}
-                        className="flex items-baseline justify-between gap-4 border-b border-white/[0.06] py-3 last:border-0"
-                      >
-                        <span className="text-sm text-muted-foreground">{s.label}</span>
-                        <span className="text-right font-serif text-base">{s.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
-          </div>
+          <CarSpecsRoot specGroups={car.specGroups} sectionRef={specsSectionRef}>
+            <div className="reveal mb-8">
+              <CarSpecsTabs />
+            </div>
+            <div className="reveal glass rounded-2xl p-6 md:p-10">
+              <CarSpecsPanel />
+            </div>
+          </CarSpecsRoot>
         </section>
 
         <div className="divider-thin container mx-auto" />
