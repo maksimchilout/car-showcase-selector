@@ -8,7 +8,8 @@ import { VRSalon } from "@/components/VRSalon";
 import { LeadDialog } from "@/components/LeadDialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getCarBySlug, type Car } from "@/lib/cars";
+import { CarGallery } from "@/components/CarGallery";
+import { getCarBySlug, getGalleryCategories, type Car } from "@/lib/cars";
 import { Phone, Calendar, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { useReveal } from "@/hooks/use-reveal";
@@ -39,9 +40,36 @@ export const Route = createFileRoute("/car/$slug")({
   ),
 });
 
+function FlatGallery({ images, carName }: { images: string[]; carName: string }) {
+  const [activeImg, setActiveImg] = useState(0);
+  return (
+    <>
+      <div className="glass overflow-hidden rounded-2xl bg-black">
+        <img src={images[activeImg]} alt={carName} className="aspect-video w-full object-cover" />
+      </div>
+      <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8">
+        {images.map((g, i) => (
+          <button
+            key={g}
+            type="button"
+            onClick={() => setActiveImg(i)}
+            className={`aspect-[4/3] overflow-hidden rounded-md border transition-all duration-500 ${
+              activeImg === i
+                ? "border-[#C9A84C] opacity-100"
+                : "border-white/[0.05] opacity-50 hover:opacity-90"
+            }`}
+          >
+            <img src={g} alt="" className="h-full w-full object-cover" loading="lazy" />
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function CarPage() {
   const { car } = Route.useLoaderData() as { car: Car };
-  const [activeImg, setActiveImg] = useState(0);
+  const galleryCategories = getGalleryCategories(car.galleryAlbums);
   useReveal();
 
   return (
@@ -128,8 +156,8 @@ function CarPage() {
 
         {/* HIGHLIGHTS */}
         <section className="container mx-auto px-6 py-32">
-          <div className="reveal mb-16">
-            <div className="eyebrow">01 — Преимущества</div>
+          <div className="reveal mb-16 text-center">
+            <div className="eyebrow">— Преимущества —</div>
             <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
               Сделано <span className="italic text-[#C9A84C]">безупречно</span>
             </h2>
@@ -151,49 +179,51 @@ function CarPage() {
 
         <div className="divider-thin container mx-auto" />
 
-        {/* 360 + VR */}
+        {/* 360 */}
         <section className="container mx-auto px-6 py-32">
-          <Tabs defaultValue="ext" className="w-full">
-            <div className="mb-12 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-              <div className="reveal">
-                <div className="eyebrow">02 — Виртуальный тур</div>
-                <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
-                  Рассмотрите <span className="italic text-[#C9A84C]">детально</span>
-                </h2>
-                <p className="mt-3 max-w-md text-sm text-muted-foreground">
-                  360° снаружи и виртуальный тур по салону. Поверните автомобиль так, как вам угодно.
-                </p>
-              </div>
-              <TabsList className="glass border-0 bg-white/[0.04] p-1">
-                <TabsTrigger value="ext" className="data-[state=active]:bg-[#C9A84C] data-[state=active]:text-black">
-                  Обзор 360°
-                </TabsTrigger>
-                <TabsTrigger value="int" className="data-[state=active]:bg-[#C9A84C] data-[state=active]:text-black">
-                  VR-салон
-                </TabsTrigger>
-              </TabsList>
+          <div className="reveal mb-12 text-center">
+            <div className="eyebrow">— Обзор 360° —</div>
+            <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
+              Обзор <span className="italic text-[#C9A84C]">360°</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
+              Перетащите изображение для вращения
+            </p>
+          </div>
+          <div className="reveal glass overflow-hidden rounded-2xl">
+            <div className="aspect-video w-full">
+              <Pano360 key={car.slug} frames={car.pano360} colors={car.pano360Colors} />
             </div>
-            <div className="reveal glass overflow-hidden rounded-2xl">
-              <TabsContent value="ext" className="m-0">
-                <Pano360 frames={car.pano360} />
-              </TabsContent>
-              <TabsContent value="int" className="m-0">
-                <VRSalon panoId={car.panoId} />
-              </TabsContent>
+          </div>
+        </section>
+
+        <div className="divider-thin container mx-auto" />
+
+        {/* VR SALON */}
+        <section className="container mx-auto px-6 py-32">
+          <div className="reveal mb-12 text-center">
+            <div className="eyebrow">— Салон VR —</div>
+            <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
+              Салон <span className="italic text-[#C9A84C]">VR</span>
+            </h2>
+          </div>
+          <div className="reveal glass overflow-hidden rounded-2xl">
+            <div className="aspect-video w-full">
+              <VRSalon key={car.slug} panoId={car.panoId} src={car.vrSalonSrc} />
             </div>
-          </Tabs>
+          </div>
         </section>
 
         <div className="divider-thin container mx-auto" />
 
         {/* SPECS */}
         <section className="container mx-auto px-6 py-32">
-          <div className="reveal mb-12">
-            <div className="eyebrow">03 — Спецификация</div>
+          <div className="reveal mb-12 text-center">
+            <div className="eyebrow">— Спецификация —</div>
             <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
               Технические <span className="italic text-[#C9A84C]">характеристики</span>
             </h2>
-            <p className="mt-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            <p className="mx-auto mt-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
               {car.name} · {new Date().getFullYear()}
             </p>
           </div>
@@ -233,29 +263,21 @@ function CarPage() {
 
         {/* GALLERY */}
         <section className="container mx-auto px-6 py-32">
-          <div className="reveal mb-12">
-            <div className="eyebrow">04 — Галерея</div>
+          <div className="reveal mb-12 text-center">
+            <div className="eyebrow">— Галерея —</div>
             <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
-              В <span className="italic text-[#C9A84C]">кадре</span>
+              {car.name} <span className="italic text-[#C9A84C]">в деталях</span>
             </h2>
+            <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
+              Выберите категорию и рассмотрите автомобиль с разных ракурсов.
+            </p>
           </div>
-          <div className="reveal glass overflow-hidden rounded-2xl bg-black">
-            <img src={car.gallery[activeImg]} alt={car.name} className="aspect-video w-full object-cover" />
-          </div>
-          <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8">
-            {car.gallery.map((g, i) => (
-              <button
-                key={g}
-                onClick={() => setActiveImg(i)}
-                className={`aspect-[4/3] overflow-hidden rounded-md border transition-all duration-500 ${
-                  activeImg === i
-                    ? "border-[#C9A84C] opacity-100"
-                    : "border-white/[0.05] opacity-50 hover:opacity-90"
-                }`}
-              >
-                <img src={g} alt="" className="h-full w-full object-cover" />
-              </button>
-            ))}
+          <div className="reveal">
+            {galleryCategories ? (
+              <CarGallery carName={car.name} categories={galleryCategories} />
+            ) : (
+              <FlatGallery images={car.gallery} carName={car.name} />
+            )}
           </div>
         </section>
 
@@ -263,8 +285,8 @@ function CarPage() {
 
         {/* WHY CHOOSE */}
         <section className="container mx-auto px-6 py-32">
-          <div className="reveal mb-16">
-            <div className="eyebrow">05 — Почему Citroën</div>
+          <div className="reveal mb-16 text-center">
+            <div className="eyebrow">— Почему Citroën —</div>
             <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
               {car.name} — <span className="italic text-[#C9A84C]">ваш лучший выбор</span>
             </h2>

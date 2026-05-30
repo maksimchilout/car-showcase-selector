@@ -10,9 +10,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Citroën — Коллекция автомобилей | Минск" },
-      { name: "description", content: "Официальный дилер Citroën в Минске. C3-XR, C5 и C5 X — выберите свой автомобиль." },
+      { name: "description", content: "Официальный дилер Citroën в Минске. C3-XR, C5 Aircross и C5 X — выберите свой автомобиль." },
       { property: "og:title", content: "Citroën — Коллекция автомобилей" },
-      { property: "og:description", content: "Citroën C3-XR, C5 и C5 X. Тест-драйв, бронь, лизинг." },
+      { property: "og:description", content: "Citroën C3-XR, C5 Aircross и C5 X. Тест-драйв, бронь, лизинг." },
     ],
   }),
   component: Index,
@@ -28,7 +28,7 @@ function Index() {
         {/* HERO */}
         <section className="container mx-auto px-6 pt-32 pb-32 md:pt-44 md:pb-40">
           <div className="mx-auto max-w-4xl text-center">
-            <div className="eyebrow animate-fade-in-slow">— Коллекция 2026 —</div>
+            <div className="eyebrow animate-fade-in-slow">— Коллекция CITROËN —</div>
             <h1
               className="mt-8 font-serif text-5xl leading-[1.05] tracking-tight md:text-7xl lg:text-[5.5rem]"
               style={{ animation: "fade-up 1.4s cubic-bezier(0.22,1,0.36,1) both" }}
@@ -50,14 +50,12 @@ function Index() {
 
         {/* COLLECTION */}
         <section className="container mx-auto px-6 py-32 md:py-40">
-          <div className="mb-20 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-            <div className="reveal">
-              <div className="eyebrow">01 — Коллекция</div>
-              <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-6xl">
-                Модельный <span className="italic text-[#C9A84C]">ряд</span>
-              </h2>
-            </div>
-            <p className="reveal max-w-sm text-sm text-muted-foreground">
+          <div className="reveal mb-20 text-center">
+            <div className="eyebrow">— Коллекция —</div>
+            <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-6xl">
+              Модельный <span className="italic text-[#C9A84C]">ряд</span>
+            </h2>
+            <p className="mx-auto mt-6 max-w-xl text-sm text-muted-foreground">
               От компактного городского кроссовера до флагманского седана — каждая модель раскрывает свой
               характер сразу за поворотом ключа.
             </p>
@@ -79,7 +77,6 @@ function Index() {
                     className="h-full w-full object-cover opacity-90 transition-all duration-[1200ms] group-hover:scale-110 group-hover:opacity-100"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-70" />
-                  <div className="eyebrow absolute left-5 top-5">0{i + 1}</div>
                 </div>
                 <div className="flex flex-1 flex-col p-8">
                   <div className="eyebrow opacity-70">{c.subtitle}</div>
@@ -104,14 +101,14 @@ function Index() {
 
         {/* PHILOSOPHY */}
         <section className="container mx-auto px-6 py-32 md:py-40">
-          <div className="grid gap-16 md:grid-cols-12">
-            <div className="reveal md:col-span-5">
-              <div className="eyebrow">02 — Философия</div>
+          <div className="mx-auto max-w-3xl">
+            <div className="reveal text-center">
+              <div className="eyebrow">— Философия —</div>
               <h2 className="mt-6 font-serif text-4xl leading-tight tracking-tight md:text-5xl">
                 Бескомпромиссный <span className="italic text-[#C9A84C]">комфорт</span>
               </h2>
             </div>
-            <div className="reveal space-y-6 text-base font-light leading-relaxed text-muted-foreground md:col-span-7">
+            <div className="reveal mt-10 space-y-6 text-center text-base font-light leading-relaxed text-muted-foreground">
               <p>
                 Более ста лет Citroën переопределяет понятие езды. Подвеска Progressive Hydraulic Cushions®,
                 кресла Advanced Comfort® и продуманная до миллиметра эргономика создают атмосферу салона,

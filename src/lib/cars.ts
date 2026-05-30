@@ -3,9 +3,21 @@ import carImages from "./car-images.json";
 export type CarSpec = { label: string; value: string };
 export type SpecGroup = { label: string; items: CarSpec[] };
 
+export type GalleryAlbums = {
+  main: string[];
+  kuzov?: string[];
+  salon: string[];
+  exterier: string[];
+  interier: string[];
+};
+
+export type GalleryCategory = { id: string; label: string; images: string[] };
+
+export type Pano360Color = { id: string; name: string; hex: string; frames: string[] };
+
 export type Car = {
   slug: string;
-  autohomeId: "3429" | "792" | "6120";
+  autohomeId: "3429" | "4370" | "6120";
   name: string;
   subtitle: string;
   tagline: string;
@@ -13,17 +25,47 @@ export type Car = {
   price: string;
   oldPrice?: string;
   panoId: string;
+  /** Полный URL iframe VR-салона (если отличается от /car/inn/{panoId}) */
+  vrSalonSrc?: string;
   thumbnail: string;
   hero: string;
   gallery: string[];
+  galleryAlbums?: GalleryAlbums;
   pano360: string[];
+  pano360Colors?: Pano360Color[];
   specs: CarSpec[];
   specGroups: SpecGroup[];
   highlights: { title: string; text: string }[];
   reasons: { title: string; text: string }[];
 };
 
-const ids = carImages as Record<string, { panovr: string[]; gallery: string[] }>;
+const ids = carImages as Record<
+  string,
+  {
+    panovr: string[];
+    gallery: string[];
+    galleryAlbums?: GalleryAlbums;
+    pano360Colors?: Pano360Color[];
+  }
+>;
+
+const GALLERY_ALBUM_LABELS: { id: keyof GalleryAlbums; label: string }[] = [
+  { id: "main", label: "Общие" },
+  { id: "kuzov", label: "Кузов" },
+  { id: "salon", label: "Салон" },
+  { id: "exterier", label: "Экстерьер" },
+  { id: "interier", label: "Интерьер" },
+];
+
+export function getGalleryCategories(albums?: GalleryAlbums): GalleryCategory[] | undefined {
+  if (!albums) return undefined;
+  const categories = GALLERY_ALBUM_LABELS.map(({ id, label }) => ({
+    id,
+    label,
+    images: albums[id] ?? [],
+  })).filter((cat) => cat.images.length > 0);
+  return categories.length > 0 ? categories : undefined;
+}
 
 // ---- Spec group factory ----------------------------------------------------
 function buildGroups(p: {
@@ -266,53 +308,53 @@ const c3xrGroups = buildGroups({
 });
 
 const c5Groups = buildGroups({
-  bodyType: "Бизнес-седан",
+  bodyType: "Компактный кроссовер (SUV)",
   drive: "Передний (FWD)",
-  power: "150 кВт / 204 л.с. при 6000 об/мин",
-  torque: "280 Н·м при 1400–4000 об/мин",
-  accel: "8.9 с",
-  topSpeed: "235 км/ч",
-  fuel: "6.8 л / 100 км",
-  fuelType: "АИ-95",
-  ecoStd: "Евро-6",
-  length: "4805 мм", width: "1860 мм", height: "1475 мм", wheelbase: "2815 мм",
-  curbWeight: "1535 кг", trunk: "532 л", fuelTank: "66 л",
-  engineCode: "PSA EP6FDTX, 1.8T",
-  displacement: "1789 см³", cylinders: "4, рядное", valves: "4",
-  intake: "Турбонаддув + интеркулер",
-  layout: "Поперечное переднее", compression: "10.0",
-  gearbox: "6-ступенчатый автомат Aisin AT6", gears: "6",
-  frontSusp: "Независимая, двухрычажная",
-  rearSusp: "Многорычажная независимая",
+  power: "155 кВт / 211 л.с. при 5500 об/мин",
+  torque: "300 Н·м при 1900–4500 об/мин",
+  accel: "—",
+  topSpeed: "220 км/ч",
+  fuel: "6.97 л / 100 км (WLTC)",
+  fuelType: "АИ-92",
+  ecoStd: "Китай-6",
+  length: "4510 мм", width: "1860 мм", height: "1705 мм", wheelbase: "2730 мм",
+  curbWeight: "1457 кг", trunk: "516–1310 л", fuelTank: "53 л",
+  engineCode: "6G03, 1.8T",
+  displacement: "1751 см³", cylinders: "4, рядное", valves: "4",
+  intake: "Турбонаддув, CVVT/CVVL",
+  layout: "Поперечное переднее", compression: "—",
+  gearbox: "8-ступенчатый автомат Aisin AT8", gears: "8",
+  frontSusp: "Независимая, McPherson",
+  rearSusp: "Полузависимая, торсионная балка",
   frontBrake: "Дисковые вентилируемые",
   rearBrake: "Дисковые",
-  parkBrake: "Электронный (EPB) с авто-удержанием",
+  parkBrake: "Электронный (EPB)",
   steering: "Электроусилитель (EPS)",
-  frontTire: "235/45 R18", rearTire: "235/45 R18",
+  frontTire: "225/55 R18", rearTire: "225/55 R18",
   wheel: "Легкосплавные 18\"",
   features: {
     sideAirbag: "есть", curtainAirbag: "есть", tpms: "есть",
-    cruise: "есть", acc: "есть", lka: "есть", aeb: "есть", blind: "есть",
-    ppdcF: "есть", cam360: "есть", apa: "есть", tsr: "есть",
-    foldMirror: "электрический с памятью", sunroof: "панорамная с электроприводом",
-    roofRails: "—",
-    seatMat: "перфорированная кожа Nappa",
-    powerSeatDrv: "8 направлений", powerSeatPsg: "6 направлений",
-    memorySeat: "есть, 2 профиля",
-    ventSeat: "есть", heatRear: "есть", heatWheel: "есть",
+    cruise: "есть", acc: "есть, полный скоростной диапазон", lka: "есть", aeb: "есть", blind: "есть",
+    ppdcF: "есть", cam360: "есть", apa: "—", tsr: "есть",
+    foldMirror: "электрический", sunroof: "панорамная",
+    roofRails: "есть",
+    seatMat: "кожа / эко-кожа",
+    powerSeatDrv: "6 направлений", powerSeatPsg: "4 направления",
+    memorySeat: "—",
+    ventSeat: "—", heatRear: "есть", heatWheel: "есть",
     climate: "автоматический", climateZones: "2",
     keyless: "есть", startStop: "есть",
-    rainSensor: "есть", lightSensor: "есть", ambientLight: "многоцветная",
-    powerTrunk: "есть",
-    display: "12\" сенсорный HD", digitalCluster: "12.3\"",
-    carplay: "Apple CarPlay, Android Auto (беспроводные)",
-    nav: "встроенная навигация",
-    voice: "есть, естественный язык",
-    speakers: "10 (премиум-аудио)", usb: "4 (Type-A и Type-C)",
-    wirelessChg: "есть, 15 Вт",
-    headlights: "Полностью светодиодные матричные",
-    autoLevel: "есть", adaptiveLight: "поворотный AFS",
-    fog: "светодиодные", washer: "есть",
+    rainSensor: "есть", lightSensor: "есть", ambientLight: "есть",
+    powerTrunk: "электропривод",
+    display: "10\" сенсорный", digitalCluster: "12.3\"",
+    carplay: "Apple CarPlay, Android Auto",
+    nav: "есть",
+    voice: "есть",
+    speakers: "8", usb: "2 (Type-A и Type-C)",
+    wirelessChg: "—",
+    headlights: "Светодиодные (LED)",
+    autoLevel: "есть", adaptiveLight: "—",
+    fog: "светодиодные", washer: "—",
   },
 });
 
@@ -386,9 +428,11 @@ export const CARS: Car[] = [
     price: "55 700 BYN",
     oldPrice: "62 400 BYN",
     panoId: "51393",
+    vrSalonSrc: "https://pano.autohome.com.cn/car/pano/51393?appversion=",
     thumbnail: ids["3429"].gallery[0],
     hero: ids["3429"].gallery[0],
     gallery: ids["3429"].gallery,
+    galleryAlbums: ids["3429"].galleryAlbums,
     pano360: ids["3429"].panovr,
     specs: c3xrGroups[0].items,
     specGroups: c3xrGroups,
@@ -406,31 +450,32 @@ export const CARS: Car[] = [
   },
   {
     slug: "c5",
-    autohomeId: "792",
-    name: "Citroën C5",
-    subtitle: "Бизнес-седан",
-    tagline: "Комфорт высшего класса",
+    autohomeId: "4370",
+    name: "Citroën C5 Aircross",
+    subtitle: "Компактный кроссовер",
+    tagline: "Французский комфорт в формате SUV",
     description:
-      "Флагманский седан с гидропневматической родословной, плавностью хода и продуманной эргономикой для дальних поездок.",
-    price: "78 900 BYN",
-    oldPrice: "84 500 BYN",
-    panoId: "30786",
-    thumbnail: ids["792"].gallery[0],
-    hero: ids["792"].gallery[0],
-    gallery: ids["792"].gallery,
-    pano360: ids["792"].panovr,
+      "Компактный кроссовер 2026 модельного года с турбомотором 1.8T (211 л.с.), 8-ступенчатым автоматом и просторным салоном. Плавность хода и узнаваемый стиль Citroën.",
+    price: "60 900 BYN",
+    oldPrice: "66 400 BYN",
+    panoId: "73365",
+    thumbnail: ids["4370"].gallery[0],
+    hero: ids["4370"].gallery[0],
+    gallery: ids["4370"].gallery,
+    pano360: ids["4370"].panovr,
+    pano360Colors: ids["4370"].pano360Colors,
     specs: c5Groups[0].items,
     specGroups: c5Groups,
     highlights: [
-      { title: "Плавность хода", text: "Подвеска с прогрессивными гидравлическими упорами." },
-      { title: "Тихий салон", text: "Шумоизоляция уровня премиум-класса." },
-      { title: "Богатое оснащение", text: "Климат, кожа, проекция на лобовое — в стандарте." },
+      { title: "1.8T 211 л.с.", text: "Двигатель 6G03 и 8AT Aisin — от 1900 об/мин доступны 300 Н·м." },
+      { title: "Простор и практичность", text: "Колёсная база 2730 мм, багажник 516–1310 л." },
+      { title: "Панорамный обзор", text: "360° экстерьер и VR-салон с autohome." },
     ],
     reasons: [
-      { title: "Легендарная плавность", text: "Наследие легендарной гидропневматики в современной интерпретации. Двухрычажная передняя и многорычажная задняя подвеска гасят неровности без шума и вибраций." },
-      { title: "Бизнес-класс в стандарте", text: "Перфорированная кожа Nappa, 2-зонный климат-контроль, проекция на лобовое стекло — всё включено. Никаких доплат за комфорт." },
-      { title: "Премиальная безопасность", text: "Полный комплекс ADAS: адаптивный круиз-контроль, удержание в полосе, автоторможение и контроль слепых зон. Защита на каждом километре." },
-      { title: "Тишина и простор", text: "Многослойная шумоизоляция кузова и продуманная эргономика. 532-литровый багажник и комфортные задние кресла для дальних поездок." },
+      { title: "Золотая связка", text: "1.8T + 8-ступенчатый автомат Aisin — отзывчивый разгон и плавные переключения. Расход WLTC 6.97 л/100 км, топливо АИ-92." },
+      { title: "Комфорт Citroën", text: "Передние сиденья с подогревом, панорамная крыша, 2-зонный климат и электропривод багажника в топовой комплектации 400THP." },
+      { title: "Безопасность и ADAS", text: "Полный скоростной адаптивный круиз, удержание в полосе, контроль слепых зон и камера 360°." },
+      { title: "Доступный SUV", text: "Компактные габариты 4510×1860×1705 мм при высоком клиренсе и углах въезда 20°/27°." },
     ],
   },
   {

@@ -1,12 +1,20 @@
-export function VRSalon({ panoId }: { panoId: string }) {
-  // AutoHome interior VR panorama
-  const src = `https://pano.autohome.com.cn/car/inn/${panoId}`;
+type VRSalonProps = {
+  panoId: string;
+  src?: string;
+};
+
+const VR_SALON_SCALE = 1.16;
+
+export function VRSalon({ panoId, src }: VRSalonProps) {
+  const iframeSrc = src ?? `https://pano.autohome.com.cn/car/inn/${panoId}`;
+
   return (
-    <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-muted shadow">
+    <div className="relative h-full w-full overflow-hidden bg-black">
       <iframe
-        src={src}
+        src={iframeSrc}
         title="VR салон"
-        className="h-full w-full"
+        className="absolute left-1/2 top-1/2 h-full w-full border-0"
+        style={{ transform: `translate(-50%, -50%) scale(${VR_SALON_SCALE})` }}
         allow="accelerometer; gyroscope; fullscreen; xr-spatial-tracking"
         allowFullScreen
         loading="lazy"

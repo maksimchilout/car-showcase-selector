@@ -24,7 +24,6 @@ export function CarSwitcher({ active }: { active: Car["slug"] }) {
                   <img src={c.thumbnail} alt={c.name} className="h-full w-full object-cover opacity-80 transition-all duration-700 group-hover:scale-105 group-hover:opacity-100" />
                 </div>
                 <div className="min-w-0">
-                  <div className="eyebrow opacity-70">0{i + 1}</div>
                   <div className={`mt-1 font-serif text-base tracking-wide md:text-lg ${isActive ? "text-[#C9A84C]" : "text-foreground"}`}>
                     {c.name}
                   </div>
