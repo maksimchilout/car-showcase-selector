@@ -6,6 +6,24 @@ import { CitroenLogo } from "@/components/CitroenLogo";
 import { PhoneLinks } from "@/components/PhoneLinks";
 import { ELECTRO_CAR_URL, YANDEX_ROUTE_URL } from "@/lib/contact";
 
+function ElectroCarLogoLink({ className = "" }: { className?: string }) {
+  return (
+    <a
+      href={ELECTRO_CAR_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`shrink-0 opacity-90 transition-opacity hover:opacity-100 ${className}`}
+      aria-label="Electro-car.by"
+    >
+      <img
+        src="/logo.png"
+        alt="Electro-car.by"
+        className="h-8 w-auto object-contain sm:h-9"
+      />
+    </a>
+  );
+}
+
 function AddressBlock({ className = "", compact = false }: { className?: string; compact?: boolean }) {
   return (
     <div className={`flex flex-col gap-0.5 ${className}`}>
@@ -48,25 +66,13 @@ export function Header() {
     >
       <div className="container mx-auto flex h-20 items-center justify-between gap-6 px-6">
         <div className="flex items-center gap-4">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-2">
             <CitroenLogo />
             <span className="font-serif text-2xl tracking-[0.18em] text-foreground">
               CITROËN
             </span>
           </Link>
-          <a
-            href={ELECTRO_CAR_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 opacity-90 transition-opacity hover:opacity-100"
-            aria-label="Electro-car.by"
-          >
-            <img
-              src="/logo.png"
-              alt="Electro-car.by"
-              className="h-8 w-auto object-contain sm:h-9"
-            />
-          </a>
+          <ElectroCarLogoLink className="max-[1280px]:hidden" />
         </div>
 
         <nav className="hidden items-center gap-10 lg:flex">
@@ -83,35 +89,38 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-6 text-xs text-muted-foreground md:flex">
+        <div className="hidden items-center gap-6 text-xs text-muted-foreground min-[1540px]:flex">
           <PhoneLinks />
-          <AddressBlock className="hidden xl:flex" />
+          <AddressBlock />
         </div>
 
         <button
           aria-label="Меню"
           onClick={() => setOpen((o) => !o)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-foreground lg:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-foreground min-[1540px]:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {open && (
-        <div className="glass border-t border-white/[0.07] lg:hidden">
+        <div className="glass border-t border-white/[0.07] min-[1540px]:hidden">
           <div className="container mx-auto flex flex-col gap-4 px-6 py-6">
-            {CARS.map((c) => (
-              <Link
-                key={c.slug}
-                to="/car/$slug"
-                params={{ slug: c.slug }}
-                onClick={() => setOpen(false)}
-                className="font-serif text-2xl tracking-wide hover:text-[#C9A84C]"
-              >
-                {c.name}
-              </Link>
-            ))}
-            <PhoneLinks compact className="mt-2" iconClassName="h-4 w-4 shrink-0 text-[#C9A84C]" />
+            <div className="flex flex-col gap-4 lg:hidden">
+              {CARS.map((c) => (
+                <Link
+                  key={c.slug}
+                  to="/car/$slug"
+                  params={{ slug: c.slug }}
+                  onClick={() => setOpen(false)}
+                  className="font-serif text-2xl tracking-wide hover:text-[#C9A84C]"
+                >
+                  {c.name}
+                </Link>
+              ))}
+            </div>
+            <ElectroCarLogoLink className="min-[1281px]:hidden w-fit" />
+            <PhoneLinks compact className="lg:mt-0 mt-2" iconClassName="h-4 w-4 shrink-0 text-[#C9A84C]" />
             <AddressBlock compact />
           </div>
         </div>

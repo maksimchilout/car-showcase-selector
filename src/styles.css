@@ -130,6 +130,13 @@ html { color-scheme: dark; }
 }
 
 @layer utilities {
+  @media (max-width: 1280px) {
+    .container {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
   .glass {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(24px);

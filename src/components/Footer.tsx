@@ -1,7 +1,7 @@
 import { MapPin, Mail } from "lucide-react";
 import { CitroenLogo } from "@/components/CitroenLogo";
 import { PhoneLinks } from "@/components/PhoneLinks";
-import { CONTACT_EMAIL, ELECTRO_CAR_URL, YANDEX_ROUTE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, ELECTRO_CAR_URL, SOCIAL_LINKS, YANDEX_ROUTE_URL } from "@/lib/contact";
 
 export function Footer() {
   return (
@@ -9,7 +9,7 @@ export function Footer() {
       <div className="container mx-auto grid gap-12 px-6 py-20 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <CitroenLogo className="h-9 w-8" />
               <span className="font-serif text-2xl tracking-[0.18em]">CITROËN</span>
             </div>
@@ -28,8 +28,7 @@ export function Footer() {
             </a>
           </div>
           <p className="mt-6 max-w-md text-sm leading-relaxed text-muted-foreground">
-            Официальный представитель Citroën в Беларуси. Продажа, сервис и оригинальные запчасти —
-            c вниманием к каждой детали.
+            ООО ЯАР Групп поставщик CITROËN в Беларуси. Продажа, сервис, запчасти.
           </p>
         </div>
 
@@ -67,17 +66,27 @@ export function Footer() {
         </div>
 
         <div>
-          <div className="eyebrow mb-5">Часы работы</div>
+          <div className="eyebrow mb-5">Соцсети</div>
           <ul className="space-y-3 text-sm text-muted-foreground">
-            <li>Пн – Пт &nbsp; 9:00 – 20:00</li>
-            <li>Сб – Вс &nbsp; 10:00 – 18:00</li>
+            {SOCIAL_LINKS.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-[#C9A84C]"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
       <div className="border-t border-white/[0.08]">
         <div className="container mx-auto flex flex-col gap-2 px-6 py-6 text-xs tracking-widest text-muted-foreground md:flex-row md:justify-between">
           <span>© {new Date().getFullYear()} CITROËN BELARUS</span>
-          <span className="opacity-60">Авторизованный дилер · Гарантия завода-изготовителя</span>
+          <span className="opacity-60">Гарантия от сервисного центра Peugeot</span>
         </div>
       </div>
     </footer>
