@@ -59,7 +59,11 @@ export function CarSpecsRoot({ specGroups, sectionRef, children }: CarSpecsRootP
     [specGroups, activeTab, activeGroup, isAll, collapseAll],
   );
 
-  return <CarSpecsContext.Provider value={value}>{children}</CarSpecsContext.Provider>;
+  return (
+    <CarSpecsContext.Provider value={value}>
+      <div className="car-specs">{children}</div>
+    </CarSpecsContext.Provider>
+  );
 }
 
 export function CarSpecsTabs() {
@@ -75,7 +79,7 @@ export function CarSpecsTabs() {
             onClick={() => setActiveTab(g.label)}
             className={`shrink-0 rounded-full px-4 py-2 text-sm transition-colors ${
               activeTab === g.label
-                ? "bg-[#C9A84C] text-black"
+                ? "bg-primary text-primary-foreground"
                 : "glass text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -87,7 +91,7 @@ export function CarSpecsTabs() {
           onClick={() => setActiveTab(ALL_TAB)}
           className={`shrink-0 rounded-full px-4 py-2 text-sm transition-colors ${
             isAll
-              ? "bg-[#C9A84C] text-black"
+              ? "bg-primary text-primary-foreground"
               : "glass text-muted-foreground hover:text-foreground"
           }`}
         >
@@ -100,7 +104,7 @@ export function CarSpecsTabs() {
 
 function SpecRows({ items }: { items: SpecGroup["items"] }) {
   return (
-    <dl className="divide-y divide-white/[0.06]">
+    <dl className="divide-y divide-border">
       {items.map((s) => (
         <div key={s.label} className="flex items-baseline justify-between gap-6 py-3.5">
           <dt className="min-w-0 text-sm leading-snug text-muted-foreground">{s.label}</dt>
@@ -134,11 +138,11 @@ export function CarSpecsPanel() {
               <SpecGroupBlock key={g.label} group={g} />
             ))}
           </div>
-          <div className="mt-10 flex justify-center border-t border-white/[0.06] pt-8">
+          <div className="mt-10 flex justify-center border-t border-border pt-8">
             <button
               type="button"
               onClick={collapseAll}
-              className="rounded-full border border-white/10 bg-black/40 px-6 py-2.5 text-sm text-muted-foreground transition-colors hover:border-[#C9A84C]/40 hover:text-foreground"
+              className="rounded-full border border-border bg-muted/60 px-6 py-2.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
             >
               Свернуть все характеристики
             </button>

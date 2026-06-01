@@ -122,7 +122,7 @@ export function Pano360({ frames, colors }: Pano360Props) {
                   style={{ backgroundColor: color.hex }}
                 >
                   <span
-                    className={`pointer-events-none absolute -inset-0.5 rounded-full border-2 border-[#C9A84C] transition-opacity duration-500 ease-in-out ${
+                    className={`pointer-events-none absolute -inset-0.5 rounded-full border-2 border-primary transition-opacity duration-500 ease-in-out ${
                       isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                     }`}
                   />
@@ -133,14 +133,14 @@ export function Pano360({ frames, colors }: Pano360Props) {
           </div>
         )}
 
-        <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/70 px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-foreground backdrop-blur-xl">
-          <RotateCw className="h-3 w-3 text-[#C9A84C]" />
+        <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full glass px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-foreground">
+          <RotateCw className="h-3 w-3 text-gold" />
           Перетащите · {index + 1}/{activeFrames.length}
         </div>
 
         {progress < 100 && (
           <div className="absolute inset-x-0 top-0 h-px bg-white/10">
-            <div className="h-full bg-[#C9A84C] transition-all" style={{ width: `${progress}%` }} />
+            <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />
           </div>
         )}
       </div>

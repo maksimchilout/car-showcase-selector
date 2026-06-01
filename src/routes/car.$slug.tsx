@@ -9,8 +9,9 @@ import { LeadDialog } from "@/components/LeadDialog";
 import { Button } from "@/components/ui/button";
 import { CarGallery } from "@/components/CarGallery";
 import { CarSpecsPanel, CarSpecsRoot, CarSpecsTabs } from "@/components/CarSpecs";
-import { getCarBySlug, getGalleryCategories, type Car } from "@/lib/cars";
-import { Phone, Calendar, Sparkles } from "lucide-react";
+import { CarHeroFacts } from "@/components/CarHeroFacts";
+import { carMetaDescription, getCarBySlug, getGalleryCategories, type Car } from "@/lib/cars";
+import { Phone, CreditCard } from "lucide-react";
 import { useRef, useState } from "react";
 import { useReveal } from "@/hooks/use-reveal";
 
@@ -25,9 +26,9 @@ export const Route = createFileRoute("/car/$slug")({
     return {
       meta: [
         { title: car ? `${car.name} — Citroën | Минск` : "Citroën" },
-        { name: "description", content: car?.description ?? "" },
+        { name: "description", content: car ? carMetaDescription(car) : "" },
         { property: "og:title", content: car?.name ?? "Citroën" },
-        { property: "og:description", content: car?.description ?? "" },
+        { property: "og:description", content: car ? carMetaDescription(car) : "" },
         { property: "og:image", content: car?.hero ?? "" },
       ],
       links: [
@@ -59,8 +60,8 @@ function FlatGallery({ images, carName }: { images: string[]; carName: string })
             onClick={() => setActiveImg(i)}
             className={`aspect-[4/3] overflow-hidden rounded-md border transition-all duration-500 ${
               activeImg === i
-                ? "border-[#C9A84C] opacity-100"
-                : "border-white/[0.05] opacity-50 hover:opacity-90"
+                ? "border-primary opacity-100"
+                : "border-border opacity-50 hover:opacity-90"
             }`}
           >
             <img src={g} alt="" className="h-full w-full object-cover" loading="lazy" />
@@ -106,29 +107,18 @@ function CarPage() {
             >
               {car.name}
             </h1>
-            <p
-              className="mt-6 font-serif text-xl italic text-[#C9A84C]"
+            <CarHeroFacts
+              facts={car.heroFacts}
               style={{ animation: "fade-up 1.2s 0.35s both" }}
-            >
-              {car.tagline}
-            </p>
-            <p
-              className="mt-6 text-sm leading-relaxed text-muted-foreground"
-              style={{ animation: "fade-up 1.2s 0.5s both" }}
-            >
-              {car.description}
-            </p>
+            />
             <div
-              className="mt-10 flex items-baseline gap-4 border-t border-white/[0.08] pt-6"
+              className="mt-10 flex items-baseline gap-4 border-t border-border pt-6"
               style={{ animation: "fade-up 1.2s 0.65s both" }}
             >
-              <div>
-                <div className="text-[0.65rem] tracking-[0.25em] text-muted-foreground">ОТ</div>
-                <div className="mt-1 font-serif text-3xl text-[#C9A84C]">{car.price}</div>
+              <div className="flex flex-wrap items-baseline gap-x-2">
+                <span className="text-[1.3rem] tracking-[0.25em] text-muted-foreground">Цена:</span>
+                <span className="font-serif text-xl leading-snug text-gold sm:text-2xl">{car.price}</span>
               </div>
-              {car.oldPrice && (
-                <span className="text-sm text-muted-foreground line-through">{car.oldPrice}</span>
-              )}
             </div>
             <div
               className="mt-8 flex flex-wrap gap-3"
@@ -137,10 +127,10 @@ function CarPage() {
               <LeadDialog
                 kind="test-drive"
                 carName={car.name}
-                title="Запись на тест-драйв"
+                title="Обратный звонок финансового специалиста"
                 trigger={
-                  <Button size="lg" className="gap-2 bg-[#C9A84C] text-black hover:bg-[#d8b965]">
-                    <Calendar className="h-4 w-4" /> Тест-драйв
+                  <Button size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+                    <CreditCard className="h-4 w-4" /> Лизинг/кредит
                   </Button>
                 }
               />
@@ -149,7 +139,7 @@ function CarPage() {
                 carName={car.name}
                 title="Бронирование автомобиля"
                 trigger={
-                  <Button size="lg" variant="outline" className="gap-2 border-white/15 bg-transparent text-foreground hover:bg-white/5">
+                  <Button size="lg" variant="outline" className="gap-2 border-border bg-transparent text-foreground hover:bg-accent">
                     <Phone className="h-4 w-4" /> Забронировать
                   </Button>
                 }
@@ -160,37 +150,12 @@ function CarPage() {
 
         <div className="divider-thin container mx-auto" />
 
-        {/* HIGHLIGHTS */}
-        <section className="container mx-auto px-6 py-32">
-          <div className="reveal mb-16 text-center">
-            <div className="eyebrow">— Преимущества —</div>
-            <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
-              Сделано <span className="italic text-[#C9A84C]">безупречно</span>
-            </h2>
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            {car.highlights.map((h, i) => (
-              <div
-                key={h.title}
-                className="reveal glass glass-hover rounded-2xl p-10"
-                style={{ transitionDelay: `${i * 100}ms` }}
-              >
-                <Sparkles className="h-6 w-6 text-[#C9A84C]" />
-                <h3 className="mt-6 font-serif text-2xl tracking-wide">{h.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{h.text}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <div className="divider-thin container mx-auto" />
-
         {/* 360 */}
         <section className="container mx-auto px-6 py-32">
           <div className="reveal mb-12 text-center">
             <div className="eyebrow">— Обзор 360° —</div>
             <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
-              Обзор <span className="italic text-[#C9A84C]">360°</span>
+              Обзор <span className="italic text-gold">360°</span>
             </h2>
             <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
               Перетащите изображение для вращения
@@ -210,7 +175,7 @@ function CarPage() {
           <div className="reveal mb-12 text-center">
             <div className="eyebrow">— Салон VR —</div>
             <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
-              Салон <span className="italic text-[#C9A84C]">VR</span>
+              Салон <span className="italic text-gold">VR</span>
             </h2>
           </div>
           <div className="reveal glass overflow-hidden rounded-2xl">
@@ -230,7 +195,7 @@ function CarPage() {
           <div className="reveal mb-12 text-center">
             <div className="eyebrow">— Спецификация —</div>
             <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
-              Технические <span className="italic text-[#C9A84C]">характеристики</span>
+              Технические <span className="italic text-gold">характеристики</span>
             </h2>
             <p className="mx-auto mt-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
               {car.name} · {new Date().getFullYear()}
@@ -253,7 +218,7 @@ function CarPage() {
           <div className="reveal mb-12 text-center">
             <div className="eyebrow">— Галерея —</div>
             <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
-              {car.name} <span className="italic text-[#C9A84C]">в деталях</span>
+              {car.name} <span className="italic text-gold">в деталях</span>
             </h2>
             <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
               Выберите категорию и рассмотрите автомобиль с разных ракурсов.
@@ -275,7 +240,7 @@ function CarPage() {
           <div className="reveal mb-16 text-center">
             <div className="eyebrow">— Почему Citroën —</div>
             <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
-              {car.name} — <span className="italic text-[#C9A84C]">ваш лучший выбор</span>
+              {car.name} — <span className="italic text-gold">ваш лучший выбор</span>
             </h2>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
@@ -286,7 +251,7 @@ function CarPage() {
                 style={{ transitionDelay: `${i * 100}ms` }}
               >
                 <div className="flex items-start gap-6">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#C9A84C]/30 bg-[#C9A84C]/10 text-[#C9A84C] font-serif text-xl">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-gold font-serif text-xl">
                     {String(i + 1).padStart(2, "0")}
                   </div>
                   <div>
@@ -312,7 +277,7 @@ function CarPage() {
             <div className="relative">
               <div className="eyebrow">— Ваш следующий шаг —</div>
               <h2 className="mx-auto mt-6 max-w-2xl font-serif text-4xl leading-tight tracking-tight md:text-5xl">
-                Готовы испытать <span className="italic text-[#C9A84C]">{car.name}</span>?
+                Готовы испытать <span className="italic text-gold">{car.name}</span>?
               </h2>
               <p className="mx-auto mt-6 max-w-lg text-sm text-muted-foreground">
                 Запишитесь на персональный тест-драйв или забронируйте автомобиль — мы перезвоним и
@@ -322,10 +287,10 @@ function CarPage() {
                 <LeadDialog
                   kind="test-drive"
                   carName={car.name}
-                  title="Запись на тест-драйв"
+                  title="Обратный звонок финансового специалиста"
                   trigger={
-                    <Button size="lg" className="bg-[#C9A84C] text-black hover:bg-[#d8b965]">
-                      Тест-драйв
+                    <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                      Лизинг/кредит
                     </Button>
                   }
                 />
@@ -334,7 +299,7 @@ function CarPage() {
                   carName={car.name}
                   title="Бронирование автомобиля"
                   trigger={
-                    <Button size="lg" variant="outline" className="border-white/15 bg-transparent hover:bg-white/5">
+                    <Button size="lg" variant="outline" className="border-border bg-transparent hover:bg-accent">
                       Забронировать
                     </Button>
                   }

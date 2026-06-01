@@ -152,7 +152,7 @@ export function CarGallery({ carName, categories }: CarGalleryProps) {
             onClick={() => handleCategoryChange(cat.label)}
             className={`rounded-full px-4 py-2 text-sm transition-colors ${
               activeCategory === cat.label
-                ? "bg-[#C9A84C] text-black"
+                ? "bg-primary text-primary-foreground"
                 : "glass text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -226,7 +226,7 @@ export function CarGallery({ carName, categories }: CarGalleryProps) {
           <button
             type="button"
             onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-            className="glass rounded-full px-8 py-3 text-sm text-foreground transition-colors hover:text-[#C9A84C]"
+            className="glass rounded-full px-8 py-3 text-sm text-foreground transition-colors hover:text-gold"
           >
             Показать ещё
           </button>
@@ -259,7 +259,7 @@ export function CarGallery({ carName, categories }: CarGalleryProps) {
                 <>
                   <button
                     type="button"
-                    className="absolute left-2 top-1/2 z-10 -translate-y-1/2 text-4xl text-muted-foreground transition-colors hover:text-[#C9A84C] sm:left-4"
+                    className="absolute left-2 top-1/2 z-10 -translate-y-1/2 text-4xl text-muted-foreground transition-colors hover:text-gold sm:left-4"
                     onClick={() => goLightbox(-1)}
                     aria-label="Предыдущее фото"
                   >
@@ -267,7 +267,7 @@ export function CarGallery({ carName, categories }: CarGalleryProps) {
                   </button>
                   <button
                     type="button"
-                    className="absolute right-2 top-1/2 z-10 -translate-y-1/2 text-4xl text-muted-foreground transition-colors hover:text-[#C9A84C] sm:right-4"
+                    className="absolute right-2 top-1/2 z-10 -translate-y-1/2 text-4xl text-muted-foreground transition-colors hover:text-gold sm:right-4"
                     onClick={() => goLightbox(1)}
                     aria-label="Следующее фото"
                   >
@@ -327,7 +327,7 @@ export function CarGallery({ carName, categories }: CarGalleryProps) {
                   aria-label="Предыдущие миниатюры"
                   disabled={!canThumbPrev}
                   onClick={() => setThumbWindowStart((s) => Math.max(0, s - 1))}
-                  className="glass flex-shrink-0 rounded-full p-1.5 text-foreground transition-colors hover:text-[#C9A84C] disabled:pointer-events-none disabled:opacity-30"
+                  className="glass flex-shrink-0 rounded-full p-1.5 text-foreground transition-colors hover:text-gold disabled:pointer-events-none disabled:opacity-30"
                 >
                   <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>
@@ -342,7 +342,7 @@ export function CarGallery({ carName, categories }: CarGalleryProps) {
                         onClick={() => setLightbox(i)}
                         className={`aspect-[4/3] w-full overflow-hidden rounded-md border-2 transition-all ${
                           i === lightbox
-                            ? "border-[#C9A84C] opacity-100 ring-1 ring-[#C9A84C]/40"
+                            ? "border-primary opacity-100 ring-1 ring-primary/40"
                             : "border-transparent opacity-60 hover:opacity-90"
                         }`}
                       >
@@ -357,7 +357,7 @@ export function CarGallery({ carName, categories }: CarGalleryProps) {
                   aria-label="Следующие миниатюры"
                   disabled={!canThumbNext}
                   onClick={() => setThumbWindowStart((s) => Math.min(maxThumbStart, s + 1))}
-                  className="glass flex-shrink-0 rounded-full p-1.5 text-foreground transition-colors hover:text-[#C9A84C] disabled:pointer-events-none disabled:opacity-30"
+                  className="glass flex-shrink-0 rounded-full p-1.5 text-foreground transition-colors hover:text-gold disabled:pointer-events-none disabled:opacity-30"
                 >
                   <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>

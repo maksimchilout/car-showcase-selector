@@ -15,15 +15,29 @@ export type GalleryCategory = { id: string; label: string; images: string[] };
 
 export type Pano360Color = { id: string; name: string; hex: string; frames: string[] };
 
+export type CarHeroFacts = {
+  dimensions: string;
+  modelYear: string;
+  gearbox: string;
+};
+
+export const CAR_HERO_FACTS_COMMON = [
+  "Белорусская сборка",
+  "Доступны финансовые программы",
+] as const;
+
+export function carMetaDescription(car: { name: string; heroFacts: CarHeroFacts }): string {
+  const { dimensions, modelYear, gearbox } = car.heroFacts;
+  return `${car.name}: габариты ${dimensions}, ${modelYear} г., ${gearbox}. ${CAR_HERO_FACTS_COMMON.join(". ")}.`;
+}
+
 export type Car = {
   slug: string;
   autohomeId: "3429" | "4370" | "6120";
   name: string;
   subtitle: string;
-  tagline: string;
-  description: string;
+  heroFacts: CarHeroFacts;
   price: string;
-  oldPrice?: string;
   panoId: string;
   /** Полный URL iframe VR-салона (если отличается от /car/inn/{panoId}) */
   vrSalonSrc?: string;
@@ -422,11 +436,12 @@ export const CARS: Car[] = [
     autohomeId: "3429",
     name: "Citroën C3-XR",
     subtitle: "Городской кроссовер",
-    tagline: "Французский стиль для города",
-    description:
-      "Компактный кроссовер с яркой внешностью, просторным салоном и экономичным турбомотором. Идеален для города и коротких путешествий.",
-    price: "55 700 BYN",
-    oldPrice: "62 400 BYN",
+    heroFacts: {
+      dimensions: "4288×1748×1570 мм",
+      modelYear: "2026",
+      gearbox: "6-ступенчатый автомат AT6",
+    },
+    price: "уточняйте у менеджера",
     panoId: "51393",
     vrSalonSrc: "https://pano.autohome.com.cn/car/pano/51393?appversion=",
     thumbnail: ids["3429"].gallery[0],
@@ -458,11 +473,12 @@ export const CARS: Car[] = [
     autohomeId: "4370",
     name: "Citroën C5 Aircross",
     subtitle: "Компактный кроссовер",
-    tagline: "Французский комфорт в формате SUV",
-    description:
-      "Компактный кроссовер 2026 модельного года с турбомотором 1.8T (211 л.с.), 8-ступенчатым автоматом и просторным салоном. Плавность хода и узнаваемый стиль Citroën.",
-    price: "60 900 BYN",
-    oldPrice: "66 400 BYN",
+    heroFacts: {
+      dimensions: "4510×1860×1705 мм",
+      modelYear: "2026",
+      gearbox: "8-ступенчатый автомат Aisin AT8",
+    },
+    price: "уточняйте у менеджера",
     panoId: "73365",
     vrSalonSrc: "https://pano.autohome.com.cn/car/pano/73365?appversion=",
     thumbnail: ids["4370"].gallery[0],
@@ -495,11 +511,12 @@ export const CARS: Car[] = [
     autohomeId: "6120",
     name: "Citroën C5 X (Versailles)",
     subtitle: "Кроссовер-фастбэк",
-    tagline: "Новая эра комфорта",
-    description:
-      "Гибрид седана, универсала и кроссовера. Уникальный силуэт, продвинутая мультимедиа и фирменная плавность Citroën Advanced Comfort®.",
-    price: "92 400 BYN",
-    oldPrice: "99 800 BYN",
+    heroFacts: {
+      dimensions: "4805×1865×1505 мм",
+      modelYear: "2026",
+      gearbox: "8-ступенчатый автомат Aisin AT8",
+    },
+    price: "уточняйте у менеджера",
     panoId: "76917",
     vrSalonSrc: "https://pano.autohome.com.cn/car/pano/76915?appversion=",
     thumbnail: ids["6120"].gallery[0],

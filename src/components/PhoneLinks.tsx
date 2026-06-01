@@ -10,11 +10,11 @@ type PhoneLinksProps = {
 
 export function PhoneLinks({
   className = "",
-  linkClassName = "tracking-wider transition-colors hover:text-[#C9A84C]",
-  iconClassName = "h-3.5 w-3.5 shrink-0 text-[#C9A84C]",
+  linkClassName = "tracking-wider transition-colors hover:text-gold",
+  iconClassName = "h-3.5 w-3.5 shrink-0 text-gold",
   compact = false,
 }: PhoneLinksProps) {
-  const iconCls = compact ? "h-4 w-4 shrink-0 text-[#C9A84C]" : iconClassName;
+  const iconCls = compact ? "h-4 w-4 shrink-0 text-gold" : iconClassName;
 
   return (
     <div className={`flex flex-col gap-0.5 ${className}`}>
