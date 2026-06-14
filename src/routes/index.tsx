@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Background } from "@/components/Background";
+import { AboutUsSection } from "@/components/AboutUsSection";
 import { CarHeroFacts } from "@/components/CarHeroFacts";
 import { CARS } from "@/lib/cars";
 import { ArrowRight } from "lucide-react";
@@ -27,17 +28,15 @@ function Index() {
       <Header />
       <main className="relative z-10 flex-1">
         {/* COLLECTION */}
-        <section className="container mx-auto px-6 pt-20 pb-32 md:pt-28 md:pb-40">
-          <div className="grid gap-8 md:grid-cols-3">
+        <section className="container mx-auto px-6 pt-12 pb-32 md:pt-16 md:pb-40">
+          <div className="grid items-stretch gap-6 md:grid-cols-3">
             {CARS.map((c, i) => (
-              <Link
+              <div
                 key={c.slug}
-                to="/car/$slug"
-                params={{ slug: c.slug }}
-                className="reveal group glass glass-hover relative flex flex-col overflow-hidden rounded-2xl"
+                className="reveal group glass glass-hover relative flex h-full flex-col overflow-hidden rounded-2xl"
                 style={{ transitionDelay: `${i * 120}ms` }}
               >
-                <div className="relative aspect-[4/3] overflow-hidden bg-black">
+                <div className="relative aspect-[4/3] shrink-0 overflow-hidden bg-black">
                   <img
                     src={c.thumbnail}
                     alt={c.name}
@@ -45,24 +44,35 @@ function Index() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-70" />
                 </div>
-                <div className="flex flex-1 flex-col p-8">
-                  <div className="eyebrow opacity-70">{c.subtitle}</div>
-                  <h3 className="mt-3 font-serif text-3xl tracking-wide">{c.name}</h3>
-                  <CarHeroFacts facts={c.heroFacts} compact className="mt-4 flex-1" />
-                  <div className="mt-8 flex items-end justify-between gap-4 border-t border-border pt-6">
-                    <div className="flex flex-wrap items-baseline gap-x-2">
-                      <span className="text-[0.65rem] tracking-[0.25em] text-muted-foreground">Цена:</span>
-                      <span className="font-serif text-lg leading-snug text-gold">{c.price}</span>
+                <div className="relative flex min-h-0 flex-1 flex-col px-3 py-6 sm:px-4">
+                  <Link
+                    to="/car/$slug"
+                    params={{ slug: c.slug }}
+                    className="absolute inset-0 z-0 rounded-2xl"
+                    aria-label={`Открыть ${c.name}`}
+                  />
+                  <div className="relative z-[1] flex min-h-0 flex-1 flex-col pointer-events-none">
+                    <div className="eyebrow whitespace-nowrap opacity-70">{c.subtitle}</div>
+                    <h3 className="mt-2 font-serif text-xl tracking-tight whitespace-nowrap">{c.name}</h3>
+                    <CarHeroFacts facts={c.heroFacts} compact className="mt-3 min-h-0 flex-1" />
+                    <div className="mt-auto flex items-end justify-between gap-2 border-t border-border pt-4">
+                      <div className="flex min-w-0 items-baseline gap-x-1.5 whitespace-nowrap">
+                        <span className="text-[0.65rem] tracking-[0.2em] text-muted-foreground">Цена:</span>
+                        <span className="font-serif text-lg leading-snug text-gold">{c.price}</span>
+                      </div>
+                      <span className="hidden min-[1100px]:flex shrink-0 items-center gap-1.5 text-xs uppercase tracking-[0.15em] text-foreground transition-colors group-hover:text-gold">
+                        Открыть <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                      </span>
                     </div>
-                    <span className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-foreground transition-colors group-hover:text-gold">
-                      Открыть <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                    </span>
                   </div>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </section>
+
+        <div className="divider-thin container mx-auto" />
+        <AboutUsSection />
       </main>
       <Footer />
     </div>

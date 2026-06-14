@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { CARS } from "@/lib/cars";
 import { CitroenLogo } from "@/components/CitroenLogo";
 import { PhoneLinks } from "@/components/PhoneLinks";
-import { ELECTRO_CAR_URL, YANDEX_ROUTE_URL } from "@/lib/contact";
+import { ELECTRO_CAR_URL, WARRANTY_PDF_URL, YANDEX_ROUTE_URL } from "@/lib/contact";
 import { ElectroCarLogo } from "@/components/ElectroCarLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -62,8 +62,8 @@ export function Header() {
           : "border-b border-transparent bg-transparent"
       }`}
     >
-      <div className="container mx-auto flex h-20 items-center justify-between gap-6 px-6">
-        <div className="flex items-center gap-4">
+      <div className="container mx-auto flex h-20 items-center gap-6 px-6">
+        <div className="flex min-w-0 flex-1 items-center gap-4">
           <Link to="/" className="flex items-center gap-2">
             <CitroenLogo />
             <span className="font-serif text-2xl tracking-[0.18em] text-foreground">
@@ -73,21 +73,21 @@ export function Header() {
           <ElectroCarLogoLink className="max-[1280px]:hidden" />
         </div>
 
-        <nav className="hidden items-center gap-10 lg:flex">
+        <nav className="hidden shrink-0 items-center justify-center gap-8 xl:gap-10 lg:flex">
           {CARS.map((c) => (
             <Link
               key={c.slug}
               to="/car/$slug"
               params={{ slug: c.slug }}
-              className="eyebrow text-muted-foreground transition-colors hover:text-gold"
-              activeProps={{ className: "eyebrow text-gold" }}
+              className="eyebrow whitespace-nowrap text-muted-foreground transition-colors hover:text-gold"
+              activeProps={{ className: "eyebrow whitespace-nowrap text-gold" }}
             >
               {c.name}
             </Link>
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-3">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
           <div className="hidden items-center gap-6 text-xs text-muted-foreground min-[1540px]:flex">
             <PhoneLinks />
             <AddressBlock />
@@ -120,6 +120,14 @@ export function Header() {
               ))}
             </div>
             <ElectroCarLogoLink className="min-[1281px]:hidden w-fit" />
+            <a
+              href={WARRANTY_PDF_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm tracking-wide text-muted-foreground transition-colors hover:text-gold"
+            >
+              Положение о гарантии
+            </a>
             <PhoneLinks compact className="lg:mt-0 mt-2" iconClassName="h-4 w-4 shrink-0 text-gold" />
             <AddressBlock compact />
           </div>

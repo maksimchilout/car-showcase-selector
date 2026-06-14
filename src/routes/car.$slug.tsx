@@ -3,10 +3,11 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Background } from "@/components/Background";
 import { CarSwitcher } from "@/components/CarSwitcher";
-import { Pano360 } from "@/components/Pano360";
+import { Pano360, usePano360Preload } from "@/components/Pano360";
 import { useVRSalonPreload, VRSalon } from "@/components/VRSalon";
 import { LeadDialog } from "@/components/LeadDialog";
 import { Button } from "@/components/ui/button";
+import { AboutUsSection } from "@/components/AboutUsSection";
 import { CarGallery } from "@/components/CarGallery";
 import { CarSpecsPanel, CarSpecsRoot, CarSpecsTabs } from "@/components/CarSpecs";
 import { CarHeroFacts } from "@/components/CarHeroFacts";
@@ -77,6 +78,7 @@ function CarPage() {
   const galleryCategories = getGalleryCategories(car.galleryAlbums);
   const specsSectionRef = useRef<HTMLElement>(null);
   useVRSalonPreload(car.panoId, car.vrSalonSrc);
+  usePano360Preload(car.pano360, car.pano360Colors);
   useReveal();
 
   return (
@@ -308,6 +310,9 @@ function CarPage() {
             </div>
           </div>
         </section>
+
+        <div className="divider-thin container mx-auto" />
+        <AboutUsSection />
       </main>
       <Footer />
     </div>

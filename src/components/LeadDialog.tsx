@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { submitLead } from "@/lib/api/lead.functions";
+import { submitLead } from "@/lib/api/submitLead";
 import { isPhoneValid, sanitizePhoneInput } from "@/lib/phone";
 
 type FormStatus = "idle" | "success" | "error";
@@ -60,12 +60,10 @@ export function LeadDialog({
     setSubmitting(true);
     try {
       await submitLead({
-        data: {
-          name: name.trim(),
-          phone: phone.trim(),
-          carName,
-          kind,
-        },
+        name: name.trim(),
+        phone: phone.trim(),
+        carName,
+        kind,
       });
 
       const successText = "Заявка успешно отправлена";

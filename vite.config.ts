@@ -1,11 +1,29 @@
-// Preset bundles tanstackStart, viteReact, tailwindcss, tsConfigPaths, nitro, etc.
-// Do not add those plugins manually or the app will break with duplicates.
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import tailwindcss from "@tailwindcss/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
+
+import { leadApiPlugin } from "./vite/lead-api-plugin";
 
 export default defineConfig({
-  tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
-    server: { entry: "server" },
+  plugins: [
+    tanstackRouter({
+      target: "react",
+      autoCodeSplitting: true,
+    }),
+    react(),
+    tailwindcss(),
+    tsconfigPaths(),
+    leadApiPlugin(),
+  ],
+  build: {
+    outDir: "dist",
+  },
+  server: {
+    port: 8080,
+  },
+  preview: {
+    port: 4173,
   },
 });

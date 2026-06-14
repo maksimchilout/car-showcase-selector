@@ -1,48 +1,54 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { RotateCw } from "lucide-react";
 import type { Pano360Color } from "@/lib/cars";
-
-const PANO360_BG = "/background360/ext-bg-default1.webp";
+import {
+  PANO360_BG,
+  collectPano360Urls,
+  getPano360Progress,
+  preloadPano360,
+  subscribePano360Preload,
+} from "@/lib/pano360-preload";
 
 type Pano360Props = {
   frames: string[];
   colors?: Pano360Color[];
 };
 
+/** Предзагружает все кадры всех цветов сразу при открытии страницы. */
+export function usePano360Preload(frames: string[], colors?: Pano360Color[]) {
+  useEffect(() => {
+    preloadPano360(frames, colors);
+  }, [frames, colors]);
+}
+
 export function Pano360({ frames, colors }: Pano360Props) {
   const colorOptions = useMemo(
     () => (colors && colors.length > 0 ? colors : [{ id: "default", name: "", hex: "", frames }]),
     [colors, frames],
   );
+  const allUrls = useMemo(() => collectPano360Urls(frames, colors), [frames, colors]);
+
   const [colorId, setColorId] = useState(colorOptions[0]?.id ?? "default");
   const activeColor = colorOptions.find((c) => c.id === colorId) ?? colorOptions[0];
   const activeFrames = activeColor?.frames ?? frames;
 
   const [index, setIndex] = useState(0);
-  const [loaded, setLoaded] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ startX: number; startIdx: number } | null>(null);
 
   useEffect(() => {
-    setIndex(0);
-    setLoaded(0);
-  }, [colorId]);
+    preloadPano360(frames, colors);
+  }, [frames, colors]);
 
   useEffect(() => {
-    let cancelled = false;
-    activeFrames.forEach((src) => {
-      const img = new Image();
-      const done = () => {
-        if (!cancelled) setLoaded((c) => c + 1);
-      };
-      img.onload = done;
-      img.onerror = done;
-      img.src = src;
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [activeFrames]);
+    setIndex(0);
+  }, [colorId]);
+
+  const progress = useSyncExternalStore(
+    subscribePano360Preload,
+    () => getPano360Progress(allUrls),
+    () => 0,
+  );
 
   const onPointerDown = (e: React.PointerEvent) => {
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
@@ -62,9 +68,7 @@ export function Pano360({ frames, colors }: Pano360Props) {
     dragRef.current = null;
   };
 
-  const progress = activeFrames.length ? Math.round((loaded / activeFrames.length) * 100) : 0;
   const showColorPicker = colors && colors.length > 1;
-
   const currentFrame = activeFrames[index];
 
   return (
@@ -94,12 +98,12 @@ export function Pano360({ frames, colors }: Pano360Props) {
         />
         {currentFrame && (
           <img
-            key={`${colorId}-${index}-${currentFrame}`}
             src={currentFrame}
             alt={`Frame ${index + 1}`}
             draggable={false}
             className="absolute inset-0 z-10 h-full w-full origin-center object-contain scale-[1.15]"
             loading="eager"
+            decoding="sync"
           />
         )}
 

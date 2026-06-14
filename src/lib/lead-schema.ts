@@ -1,10 +1,8 @@
-import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import { createBitrixLead } from "../bitrix.server";
-import { isPhoneValid, PHONE_INPUT_REGEX } from "../phone";
+import { isPhoneValid, PHONE_INPUT_REGEX } from "./phone";
 
-const leadSchema = z.object({
+export const leadSchema = z.object({
   name: z.string().trim().min(1, "Укажите имя"),
   phone: z
     .string()
@@ -15,9 +13,4 @@ const leadSchema = z.object({
   kind: z.enum(["test-drive", "booking"]),
 });
 
-export const submitLead = createServerFn({ method: "POST" })
-  .inputValidator(leadSchema)
-  .handler(async ({ data }) => {
-    await createBitrixLead(data);
-    return { ok: true as const };
-  });
+export type LeadInput = z.infer<typeof leadSchema>;

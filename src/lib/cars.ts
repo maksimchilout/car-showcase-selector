@@ -91,7 +91,7 @@ function buildGroups(p: {
   topSpeed: string;
   fuel: string;
   fuelType: string;
-  ecoStd: string;
+  ecoStd?: string;
   // dimensions
   length: string; width: string; height: string; wheelbase: string;
   curbWeight: string; trunk: string;
@@ -107,6 +107,11 @@ function buildGroups(p: {
   parkBrake: string;
   steering: string;
   frontTire: string; rearTire: string; wheel: string;
+  steeringWheelMat?: string;
+  steeringAdjust?: string;
+  climateLabel?: string;
+  climateZonesLabel?: string;
+  emergencyBrakeLabel?: string;
   // safety / features (booleans rendered as есть/нет)
   features: Partial<Record<string, string>>;
 }): SpecGroup[] {
@@ -123,8 +128,8 @@ function buildGroups(p: {
         { label: "Максимальная скорость", value: p.topSpeed },
         { label: "Расход топлива (смеш.)", value: p.fuel },
         { label: "Тип топлива", value: p.fuelType },
-        { label: "Экологический стандарт", value: p.ecoStd },
-        { label: "Гарантия", value: "1 год" },
+        ...(p.ecoStd ? [{ label: "Экологический стандарт", value: p.ecoStd }] : []),
+        { label: "Гарантия", value: "3 года или 100 000 км" },
       ],
     },
     {
@@ -183,13 +188,18 @@ function buildGroups(p: {
         { label: "Подушки безопасности водителя", value: "есть" },
         { label: "Подушки безопасности переднего пассажира", value: "есть" },
         { label: "Боковые подушки безопасности", value: f("sideAirbag") },
-        { label: "Шторки безопасности", value: f("curtainAirbag") },
+        ...(p.features.curtainAirbag !== undefined
+          ? [{ label: "Шторки безопасности", value: f("curtainAirbag") }]
+          : []),
         { label: "ABS (антиблокировочная система)", value: "есть" },
         { label: "EBD (распределение тормозных усилий)", value: "есть" },
         { label: "ESP (стабилизация)", value: "есть" },
         { label: "Система контроля давления в шинах", value: f("tpms") },
         { label: "Изофикс", value: "есть" },
-        { label: "Помощь при экстренном торможении (BAS)", value: "есть" },
+        {
+          label: p.emergencyBrakeLabel ?? "Помощь при экстренном торможении (BAS)",
+          value: "есть",
+        },
       ],
     },
     {
@@ -206,72 +216,145 @@ function buildGroups(p: {
         { label: "Камера 360°", value: f("cam360") },
         { label: "Автопарковка", value: f("apa") },
         { label: "Распознавание дорожных знаков", value: f("tsr") },
-      ],
+      ].filter((item) => item.value !== "—"),
     },
     {
       label: "Экстерьер",
       items: [
-        { label: "Электропривод складывания зеркал", value: f("foldMirror") },
-        { label: "Подогрев боковых зеркал", value: "есть" },
-        { label: "Люк / панорамная крыша", value: f("sunroof") },
-        { label: "Рейлинги на крыше", value: f("roofRails") },
-        { label: "Хромированные молдинги", value: "есть" },
+        ...(p.features.mirrorPower !== undefined
+          ? [{ label: "Электропривод зеркал", value: f("mirrorPower") }]
+          : []),
+        ...(p.features.foldMirror !== undefined
+          ? [{ label: "Электропривод складывания зеркал", value: f("foldMirror") }]
+          : []),
+        ...(p.features.mirrorHeat !== undefined
+          ? [{ label: "Подогрев боковых зеркал", value: f("mirrorHeat") }]
+          : []),
+        ...(p.features.sunroof !== undefined
+          ? [{ label: "Люк / панорамная крыша", value: f("sunroof") }]
+          : []),
+        ...(p.features.roofRails !== undefined
+          ? [{ label: "Рейлинги на крыше", value: f("roofRails") }]
+          : []),
+        ...(p.features.chromeMoldings !== undefined
+          ? [{ label: "Хромированные молдинги", value: f("chromeMoldings") }]
+          : []),
       ],
     },
     {
       label: "Интерьер",
       items: [
-        { label: "Отделка руля", value: "кожа" },
-        { label: "Отделка сидений", value: f("seatMat") },
-        { label: "Регулировка руля", value: "по высоте и вылету" },
+        { label: "Отделка руля", value: p.steeringWheelMat ?? "кожа" },
+        ...(p.features.seatMat !== undefined
+          ? [{ label: "Отделка сидений", value: f("seatMat") }]
+          : []),
+        { label: "Регулировка руля", value: p.steeringAdjust ?? "по высоте и вылету" },
+        ...(p.features.driverSeatHeight !== undefined
+          ? [
+              {
+                label: "Регулировка водительского сиденья по высоте",
+                value: f("driverSeatHeight"),
+              },
+            ]
+          : []),
         { label: "Электропривод водительского сиденья", value: f("powerSeatDrv") },
         { label: "Электропривод сиденья пассажира", value: f("powerSeatPsg") },
         { label: "Память настроек водительского сиденья", value: f("memorySeat") },
-        { label: "Подогрев передних сидений", value: "есть" },
+        ...(p.features.frontSeatHeat !== undefined
+          ? [{ label: "Подогрев передних сидений", value: f("frontSeatHeat") }]
+          : []),
         { label: "Вентиляция передних сидений", value: f("ventSeat") },
         { label: "Подогрев задних сидений", value: f("heatRear") },
         { label: "Подогрев руля", value: f("heatWheel") },
-        { label: "Складывание заднего ряда сидений", value: "есть, 40/60" },
-      ],
+        ...(p.features.rearSeatFold !== undefined
+          ? [{ label: "Складывание заднего ряда сидений", value: f("rearSeatFold") }]
+          : []),
+        ...(p.features.cargoShelf !== undefined
+          ? [{ label: "Багажная полка", value: f("cargoShelf") }]
+          : []),
+      ].filter((item) => item.value !== "—"),
     },
     {
       label: "Комфорт и удобства",
       items: [
-        { label: "Климат-контроль", value: f("climate") },
-        { label: "Зоны климат-контроля", value: f("climateZones") },
-        { label: "Бесключевой доступ", value: f("keyless") },
-        { label: "Запуск двигателя кнопкой", value: f("startStop") },
+        ...(p.features.climate !== undefined
+          ? [{ label: p.climateLabel ?? "Климат-контроль", value: f("climate") }]
+          : []),
+        ...(p.features.climateZones !== undefined
+          ? [{ label: p.climateZonesLabel ?? "Зоны климат-контроля", value: f("climateZones") }]
+          : []),
+        ...(p.features.keyless !== undefined
+          ? [{ label: "Бесключевой доступ", value: f("keyless") }]
+          : []),
+        ...(p.features.startStop !== undefined
+          ? [{ label: "Запуск двигателя кнопкой", value: f("startStop") }]
+          : []),
         { label: "Электростеклоподъёмники", value: "все" },
-        { label: "Датчик дождя", value: f("rainSensor") },
-        { label: "Датчик света", value: f("lightSensor") },
-        { label: "Атмосферная подсветка салона", value: f("ambientLight") },
-        { label: "Электропривод багажника", value: f("powerTrunk") },
-      ],
+        ...(p.features.rainSensor !== undefined
+          ? [{ label: "Датчик дождя", value: f("rainSensor") }]
+          : []),
+        ...(p.features.lightSensor !== undefined
+          ? [{ label: "Датчик света", value: f("lightSensor") }]
+          : []),
+        ...(p.features.ambientLight !== undefined
+          ? [{ label: "Атмосферная подсветка салона", value: f("ambientLight") }]
+          : []),
+        ...(p.features.powerTrunk !== undefined
+          ? [{ label: "Электропривод багажника", value: f("powerTrunk") }]
+          : []),
+      ].filter((item) => item.value !== "—"),
     },
     {
       label: "Мультимедиа",
       items: [
-        { label: "Центральный экран", value: f("display") },
-        { label: "Цифровая приборная панель", value: f("digitalCluster") },
+        ...(p.features.display !== undefined
+          ? [{ label: "Центральный экран", value: f("display") }]
+          : []),
+        ...(p.features.digitalCluster !== undefined
+          ? [{ label: "Цифровая приборная панель", value: f("digitalCluster") }]
+          : []),
         { label: "Bluetooth", value: "есть" },
-        { label: "Поддержка CarPlay / Android Auto", value: f("carplay") },
-        { label: "Навигация", value: f("nav") },
-        { label: "Голосовое управление", value: f("voice") },
-        { label: "Количество динамиков", value: f("speakers") },
-        { label: "USB-разъёмы", value: f("usb") },
-        { label: "Беспроводная зарядка", value: f("wirelessChg") },
-      ],
+        ...(p.features.carplay !== undefined
+          ? [{ label: "Поддержка CarPlay / Android Auto", value: f("carplay") }]
+          : []),
+        ...(p.features.nav !== undefined ? [{ label: "Навигация", value: f("nav") }] : []),
+        ...(p.features.voice !== undefined
+          ? [{ label: "Голосовое управление", value: f("voice") }]
+          : []),
+        ...(p.features.speakers !== undefined
+          ? [{ label: "Количество динамиков", value: f("speakers") }]
+          : []),
+        ...(p.features.usb !== undefined ? [{ label: "USB-разъёмы", value: f("usb") }] : []),
+        ...(p.features.wirelessChg !== undefined
+          ? [{ label: "Беспроводная зарядка", value: f("wirelessChg") }]
+          : []),
+      ].filter((item) => item.value !== "—"),
     },
     {
       label: "Освещение",
       items: [
-        { label: "Тип передних фар", value: f("headlights") },
-        { label: "Светодиодные дневные ходовые огни", value: "есть" },
-        { label: "Автоматический корректор фар", value: f("autoLevel") },
-        { label: "Адаптивный свет", value: f("adaptiveLight") },
-        { label: "Противотуманные фары", value: f("fog") },
-        { label: "Омыватель фар", value: f("washer") },
-      ],
+        ...(p.features.headlights !== undefined
+          ? [{ label: "Тип передних фар", value: f("headlights") }]
+          : []),
+        ...(p.features.drl !== undefined
+          ? [{ label: "Светодиодные дневные ходовые огни", value: f("drl") }]
+          : []),
+        ...(p.features.autoLevel !== undefined
+          ? [{ label: "Автоматический корректор фар", value: f("autoLevel") }]
+          : []),
+        ...(p.features.adaptiveLight !== undefined
+          ? [{ label: "Адаптивный свет", value: f("adaptiveLight") }]
+          : []),
+        ...(p.features.fog !== undefined
+          ? [{ label: "Противотуманные фары", value: f("fog") }]
+          : []),
+        ...(p.features.washer !== undefined
+          ? [{ label: "Омыватель фар", value: f("washer") }]
+          : []),
+        ...(p.features.rearFogLight !== undefined
+          ? [{ label: "Задний противотуманный фонарь", value: f("rearFogLight") }]
+          : []),
+      ].filter((item) => item.value !== "—"),
     },
   ];
 }
@@ -281,65 +364,70 @@ function buildGroups(p: {
 const c3xrGroups = buildGroups({
   bodyType: "Компактный кроссовер (SUV)",
   drive: "Передний (FWD)",
-  power: "100 кВт / 136 л.с. при 5500 об/мин",
-  torque: "230 Н·м при 1750 об/мин",
-  accel: "10.1 с",
-  topSpeed: "190 км/ч",
-  fuel: "5.9 л / 100 км",
+  steeringWheelMat: "пластик",
+  steeringAdjust: "по высоте",
+  climateLabel: "Кондиционер",
+  climateZonesLabel: "Зоны кондиционера",
+  power: "85 кВт/116 л.с. при 5500 об/мин",
+  torque: "190 Н·м при 1500-3500 об/мин",
+  accel: "12.0 с",
+  topSpeed: "185 км/ч",
+  fuel: "5,98 л / 100 км",
   fuelType: "АИ-95",
-  ecoStd: "Евро-6",
-  length: "4288 мм", width: "1748 мм", height: "1570 мм", wheelbase: "2655 мм",
-  curbWeight: "1265 кг", trunk: "520 л", fuelTank: "53 л",
-  engineCode: "PSA EB2ADTS, 1.2 THP",
+  length: "4288 мм", width: "1748 мм", height: "1557 мм", wheelbase: "2655 мм",
+  curbWeight: "1220 кг", trunk: "420 л", fuelTank: "47 л",
+  engineCode: "PSA, 1.2 PureTech",
   displacement: "1199 см³", cylinders: "3, рядное", valves: "4",
   intake: "Турбонаддув", layout: "Поперечное переднее", compression: "10.5",
-  gearbox: "6-ступенчатый автомат AT6", gears: "6",
+  gearbox: "6-ступенчатая роботизированная 6DCT", gears: "6",
   frontSusp: "Независимая, McPherson",
   rearSusp: "Полузависимая, торсионная балка",
   frontBrake: "Дисковые вентилируемые",
   rearBrake: "Дисковые",
   parkBrake: "Механический",
   steering: "Электроусилитель (EPS)",
-  frontTire: "215/50 R17", rearTire: "215/50 R17",
-  wheel: "Легкосплавные 17\"",
+  frontTire: "205/60 R16", rearTire: "205/60 R16",
+  wheel: "Легкосплавные 16\"",
   features: {
-    sideAirbag: "есть", curtainAirbag: "есть", tpms: "есть",
-    cruise: "есть", acc: "—", lka: "—", aeb: "—", blind: "—",
-    ppdcF: "—", cam360: "—", apa: "—", tsr: "—",
-    foldMirror: "электрический", sunroof: "панорамная крыша", roofRails: "есть",
-    seatMat: "ткань / эко-кожа",
-    powerSeatDrv: "—", powerSeatPsg: "—", memorySeat: "—",
-    ventSeat: "—", heatRear: "—", heatWheel: "—",
-    climate: "автоматический", climateZones: "1",
-    keyless: "есть", startStop: "есть",
-    rainSensor: "есть", lightSensor: "есть", ambientLight: "есть", powerTrunk: "—",
-    display: "10\" сенсорный", digitalCluster: "—",
-    carplay: "Apple CarPlay, Android Auto", nav: "есть", voice: "есть",
-    speakers: "6", usb: "2", wirelessChg: "—",
-    headlights: "Светодиодные (LED)", autoLevel: "есть",
-    adaptiveLight: "—", fog: "светодиодные", washer: "—",
+    sideAirbag: "есть", tpms: "есть",
+    cruise: "есть",
+    mirrorPower: "есть",
+    roofRails: "есть",
+    driverSeatHeight: "есть",
+    cargoShelf: "есть",
+    climate: "есть",
+    climateZones: "1",
+    rainSensor: "есть",
+    lightSensor: "есть",
+    display: "9\" сенсорный",
+    digitalCluster: "есть",
+    speakers: "4",
+    usb: "2 (Type-A и Type-C)",
+    headlights: "Галогеновые",
+    rearFogLight: "есть",
   },
 });
 
 const c5Groups = buildGroups({
   bodyType: "Компактный кроссовер (SUV)",
   drive: "Передний (FWD)",
-  power: "155 кВт / 211 л.с. при 5500 об/мин",
-  torque: "300 Н·м при 1900–4500 об/мин",
-  accel: "—",
-  topSpeed: "220 км/ч",
-  fuel: "6.97 л / 100 км (WLTC)",
-  fuelType: "АИ-92",
-  ecoStd: "Китай-6",
+  power: "129 кВт/175 л.с. при 5500 об/мин",
+  torque: "250 Н·м при 1750-4500 об/мин",
+  accel: "10.4 с",
+  topSpeed: "200 км/ч",
+  fuel: "6,96 л / 100 км",
+  fuelType: "АИ-95",
   length: "4510 мм", width: "1860 мм", height: "1705 мм", wheelbase: "2730 мм",
-  curbWeight: "1457 кг", trunk: "516–1310 л", fuelTank: "53 л",
-  engineCode: "6G03, 1.8T",
-  displacement: "1751 см³", cylinders: "4, рядное", valves: "4",
-  intake: "Турбонаддув, CVVT/CVVL",
-  layout: "Поперечное переднее", compression: "—",
+  curbWeight: "1485 кг", trunk: "516–1310 л", fuelTank: "53 л",
+  engineCode: "PSA, 1.6T PureTech",
+  displacement: "1598 см³", cylinders: "4, рядное", valves: "4",
+  intake: "Турбонаддув Twin-Scroll",
+  layout: "Поперечное переднее", compression: "10,5",
   gearbox: "8-ступенчатый автомат Aisin AT8", gears: "8",
-  frontSusp: "Независимая, McPherson",
-  rearSusp: "Полузависимая, торсионная балка",
+  frontSusp:
+    "Независимая пружинная типа McPherson со стабилизатором поперечной устойчивости и с амортизаторами Progressive Hydraulic Cushions",
+  rearSusp:
+    "Полузависимая пружинная с амортизаторами Progressive Hydraulic Cushions и стабилизатором поперечной устойчивости",
   frontBrake: "Дисковые вентилируемые",
   rearBrake: "Дисковые",
   parkBrake: "Электронный (EPB)",
@@ -348,85 +436,92 @@ const c5Groups = buildGroups({
   wheel: "Легкосплавные 18\"",
   features: {
     sideAirbag: "есть", curtainAirbag: "есть", tpms: "есть",
-    cruise: "есть", acc: "есть, полный скоростной диапазон", lka: "есть", aeb: "есть", blind: "есть",
-    ppdcF: "есть", cam360: "есть", apa: "—", tsr: "есть",
-    foldMirror: "электрический", sunroof: "панорамная",
+    cruise: "есть",
+    ppdcF: "есть",
+    cam360: "есть",
+    foldMirror: "электрический",
+    mirrorHeat: "есть",
     roofRails: "есть",
+    chromeMoldings: "есть",
     seatMat: "кожа / эко-кожа",
-    powerSeatDrv: "6 направлений", powerSeatPsg: "4 направления",
-    memorySeat: "—",
-    ventSeat: "—", heatRear: "есть", heatWheel: "есть",
-    climate: "автоматический", climateZones: "2",
-    keyless: "есть", startStop: "есть",
-    rainSensor: "есть", lightSensor: "есть", ambientLight: "есть",
-    powerTrunk: "электропривод",
-    display: "10\" сенсорный", digitalCluster: "12.3\"",
-    carplay: "Apple CarPlay, Android Auto",
-    nav: "есть",
-    voice: "есть",
-    speakers: "8", usb: "2 (Type-A и Type-C)",
-    wirelessChg: "—",
+    rearSeatFold: "есть, 40/60",
+    powerSeatDrv: "6 направлений",
+    powerSeatPsg: "6 направлений",
+    frontSeatHeat: "есть",
+    cargoShelf: "есть",
+    climate: "автоматический",
+    climateZones: "2",
+    keyless: "есть",
+    startStop: "есть",
+    rainSensor: "есть",
+    lightSensor: "есть",
+    display: "10\" сенсорный",
+    digitalCluster: "12.3\"",
+    speakers: "6",
+    usb: "2 (Type-A и Type-C)",
+    wirelessChg: "есть",
     headlights: "Светодиодные (LED)",
-    autoLevel: "есть", adaptiveLight: "—",
-    fog: "светодиодные", washer: "—",
+    drl: "есть",
+    autoLevel: "есть",
+    fog: "светодиодные",
   },
 });
 
 const c5xGroups = buildGroups({
-  bodyType: "Кроссовер-фастбэк",
+  bodyType: "кроссбэк",
   drive: "Передний (FWD)",
+  emergencyBrakeLabel: "Система экстренного торможения EBA",
   power: "129 кВт / 175 л.с. при 5500 об/мин",
-  torque: "250 Н·м при 1650 об/мин",
-  accel: "8.6 с",
-  topSpeed: "210 км/ч",
-  fuel: "6.4 л / 100 км",
+  torque: "250 Н·м при 1750-4500 об/мин",
+  accel: "8.9 с",
+  topSpeed: "221 км/ч",
+  fuel: "6,96 л / 100 км",
   fuelType: "АИ-95",
-  ecoStd: "Евро-6",
   length: "4805 мм", width: "1865 мм", height: "1505 мм", wheelbase: "2785 мм",
-  curbWeight: "1560 кг", trunk: "545 л (до 1640 л со сложенным рядом)",
-  fuelTank: "53 л",
-  engineCode: "PSA EP6FDT, 1.6T PureTech",
+  curbWeight: "1505 кг", trunk: "545 л (до 1640 л со сложенным рядом)",
+  fuelTank: "51 л",
+  engineCode: "PSA, 1.6T PureTech",
   displacement: "1598 см³", cylinders: "4, рядное", valves: "4",
   intake: "Турбонаддув Twin-Scroll",
   layout: "Поперечное переднее", compression: "10.5",
   gearbox: "8-ступенчатый автомат Aisin AT8", gears: "8",
-  frontSusp: "McPherson с прогрессивными гидравлическими упорами PHC",
-  rearSusp: "Многорычажная с PHC (Citroën Advanced Comfort®)",
+  frontSusp:
+    "Независимая пружинная типа McPherson со стабилизатором поперечной устойчивости и с амортизаторами Progressive Hydraulic Cushions",
+  rearSusp:
+    "Полузависимая пружинная с амортизаторами Progressive Hydraulic Cushions и стабилизатором поперечной устойчивости",
   frontBrake: "Дисковые вентилируемые",
   rearBrake: "Дисковые",
-  parkBrake: "Электронный (EPB) с авто-удержанием",
+  parkBrake: "Электронный (EPB)",
   steering: "Электроусилитель (EPS)",
-  frontTire: "235/55 R19", rearTire: "235/55 R19",
-  wheel: "Легкосплавные 19\" диамантированные",
+  frontTire: "225/55 R18", rearTire: "225/55 R18",
+  wheel: "Легкосплавные 18\"",
   features: {
-    sideAirbag: "есть", curtainAirbag: "есть, на оба ряда",
-    tpms: "с индикацией давления",
-    cruise: "есть", acc: "есть, Stop&Go", lka: "есть",
-    aeb: "есть, с распознаванием пешеходов и велосипедистов",
-    blind: "есть", ppdcF: "есть", cam360: "Top Rear Vision 360°",
-    apa: "Park Assist полуавтомат", tsr: "есть",
-    foldMirror: "электрический складывающийся с памятью",
-    sunroof: "панорамная стеклянная крыша",
-    roofRails: "хромированные",
-    seatMat: "Advanced Comfort кожа / Alcantara",
-    powerSeatDrv: "8 направлений с массажем",
-    powerSeatPsg: "6 направлений", memorySeat: "есть, 2 профиля",
-    ventSeat: "есть", heatRear: "есть", heatWheel: "есть",
-    climate: "автоматический", climateZones: "2",
-    keyless: "Hands Free Access",
+    sideAirbag: "есть",
+    curtainAirbag: "есть",
+    tpms: "есть",
+    cruise: "есть",
+    foldMirror: "есть",
+    sunroof: "есть",
+    roofRails: "есть",
+    seatMat: "экокожа",
+    rearSeatFold: "есть, 40/60",
+    powerSeatDrv: "6 направлений",
+    frontSeatHeat: "есть",
+    cargoShelf: "есть",
+    climate: "автоматический",
+    climateZones: "2",
+    keyless: "есть",
     startStop: "есть",
-    rainSensor: "есть", lightSensor: "есть",
-    ambientLight: "многоцветная LED 8 цветов",
-    powerTrunk: "электропривод с сенсорным открыванием",
-    display: "12\" сенсорный HD", digitalCluster: "12\"",
-    carplay: "Беспроводные Apple CarPlay и Android Auto",
-    nav: "Connected Nav в реальном времени",
-    voice: "есть, естественный язык",
-    speakers: "12 Hi-Fi Premium", usb: "4 (Type-C)",
-    wirelessChg: "есть, 15 Вт",
+    rainSensor: "есть",
+    lightSensor: "есть",
+    display: "10\" сенсорный HD",
+    digitalCluster: "7\"",
+    speakers: "8",
+    usb: "3 (Type-C)",
     headlights: "Adaptive LED Vision",
-    autoLevel: "есть", adaptiveLight: "адаптивный AFS",
-    fog: "интегрированы в LED-блок", washer: "есть",
+    drl: "есть",
+    autoLevel: "есть",
+    fog: "есть",
   },
 });
 
@@ -437,11 +532,11 @@ export const CARS: Car[] = [
     name: "Citroën C3-XR",
     subtitle: "Городской кроссовер",
     heroFacts: {
-      dimensions: "4288×1748×1570 мм",
+      dimensions: "4288×1748×1557 мм",
       modelYear: "2026",
-      gearbox: "6-ступенчатый автомат AT6",
+      gearbox: "6-ступенчатая роботизированная 6DCT",
     },
-    price: "уточняйте у менеджера",
+    price: "74 900 BYN",
     panoId: "51393",
     vrSalonSrc: "https://pano.autohome.com.cn/car/pano/51393?appversion=",
     thumbnail: ids["3429"].gallery[0],
@@ -452,20 +547,20 @@ export const CARS: Car[] = [
     specs: c3xrGroups[0].items,
     specGroups: c3xrGroups,
     highlights: [
-      { title: "Турбомотор 1.2 THP", text: "136 л.с. крутящего удовольствия и низкий расход топлива." },
+      { title: "Турбомотор 1.2 PureTech", text: "116 л.с. крутящего удовольствия и низкий расход топлива." },
       { title: "Просторный салон", text: "Колёсная база 2655 мм — комфорт для пятерых." },
       { title: "Французский дизайн", text: "Узнаваемая оптика и фирменные шевроны Citroën." },
     ],
     reasons: [
       { title: "Доступная роскошь", text: "Французский дизайн и качество сборки по цене массового сегмента. Вы получаете узнаваемый стиль и премиальные детали без переплаты." },
-      { title: "Экономичность", text: "Расход всего 5.9 л/100 км в смешанном цикле. Надёжный 3-цилиндровый турбомотор THP сочетает отзывчивость и бережливость." },
+      { title: "Экономичность", text: "Расход всего 5,98 л/100 км в смешанном цикле. Надёжный 3-цилиндровый турбомотор PureTech сочетает отзывчивость и бережливость." },
       { title: "Манёвренность в городе", text: "Компактные габариты при просторном салоне на 5 человек. Легко паркуется, удобно передвигаться по плотному трафику." },
       { title: "Панорамная крыша", text: "Свет и воздух в салоне уже в базовой комплектации. Создаёт ощущение простора и открытости каждой поездке." },
       {
         title: "Цифровой салон",
         text: "10\" сенсорный экран, Apple CarPlay и Android Auto, светодиодная оптика и доступ без ключа — технологии, которые упрощают каждую поездку.",
       },
-      { title: "Гарантия", text: "Гарантия 3 года или 100.000 км." },
+      { title: "Гарантия", text: "Гарантия 3 года или 100 000 км." },
     ],
   },
   {
@@ -478,7 +573,7 @@ export const CARS: Car[] = [
       modelYear: "2026",
       gearbox: "8-ступенчатый автомат Aisin AT8",
     },
-    price: "уточняйте у менеджера",
+    price: "94 900 BYN",
     panoId: "73365",
     vrSalonSrc: "https://pano.autohome.com.cn/car/pano/73365?appversion=",
     thumbnail: ids["4370"].gallery[0],
@@ -490,12 +585,12 @@ export const CARS: Car[] = [
     specs: c5Groups[0].items,
     specGroups: c5Groups,
     highlights: [
-      { title: "1.8T 211 л.с.", text: "Двигатель 6G03 и 8AT Aisin — от 1900 об/мин доступны 300 Н·м." },
+      { title: "1.6T PureTech 175 л.с.", text: "Двигатель PSA и 8AT Aisin — от 1750 об/мин доступны 250 Н·м." },
       { title: "Простор и практичность", text: "Колёсная база 2730 мм, багажник 516–1310 л." },
       { title: "Панорамный обзор", text: "360° экстерьер и VR-салон с autohome." },
     ],
     reasons: [
-      { title: "Золотая связка", text: "1.8T + 8-ступенчатый автомат Aisin — отзывчивый разгон и плавные переключения. Расход WLTC 6.97 л/100 км, топливо АИ-92." },
+      { title: "Золотая связка", text: "1.6T PureTech + 8-ступенчатый автомат Aisin — отзывчивый разгон и плавные переключения. Расход 6,96 л/100 км, топливо АИ-95." },
       { title: "Комфорт Citroën", text: "Передние сиденья с подогревом, панорамная крыша, 2-зонный климат и электропривод багажника в топовой комплектации 400THP." },
       { title: "Безопасность и ADAS", text: "Полный скоростной адаптивный круиз, удержание в полосе, контроль слепых зон и камера 360°." },
       { title: "Доступный SUV", text: "Компактные габариты 4510×1860×1705 мм при высоком клиренсе и углах въезда 20°/27°." },
@@ -503,20 +598,20 @@ export const CARS: Car[] = [
         title: "Вместительный багажник",
         text: "От 516 до 1310 л при сложенных сиденьях — один из самых практичных багажников в классе. Удобно для семьи и дальних поездок.",
       },
-      { title: "Гарантия", text: "Гарантия 3 года или 100.000 км." },
+      { title: "Гарантия", text: "Гарантия 3 года или 100 000 км." },
     ],
   },
   {
     slug: "c5-x",
     autohomeId: "6120",
-    name: "Citroën C5 X (Versailles)",
+    name: "Citroën C5 X",
     subtitle: "Кроссовер-фастбэк",
     heroFacts: {
       dimensions: "4805×1865×1505 мм",
       modelYear: "2026",
       gearbox: "8-ступенчатый автомат Aisin AT8",
     },
-    price: "уточняйте у менеджера",
+    price: "95 900 BYN",
     panoId: "76917",
     vrSalonSrc: "https://pano.autohome.com.cn/car/pano/76915?appversion=",
     thumbnail: ids["6120"].gallery[0],
@@ -541,7 +636,7 @@ export const CARS: Car[] = [
         title: "Простор бизнес-класса",
         text: "Колёсная база 2785 мм и багажник до 1640 л. Задний ряд с комфортом для взрослых — редкое сочетание для кроссовера-фастбэка.",
       },
-      { title: "Гарантия", text: "Гарантия 3 года или 100.000 км." },
+      { title: "Гарантия", text: "Гарантия 3 года или 100 000 км." },
     ],
   },
 ];

@@ -2,7 +2,7 @@ import { MapPin, Mail } from "lucide-react";
 import { CitroenLogo } from "@/components/CitroenLogo";
 import { ElectroCarLogo } from "@/components/ElectroCarLogo";
 import { PhoneLinks } from "@/components/PhoneLinks";
-import { CONTACT_EMAIL, ELECTRO_CAR_URL, SOCIAL_LINKS, YANDEX_ROUTE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, ELECTRO_CAR_URL, SOCIAL_LINKS, WARRANTY_PDF_URL, YANDEX_ROUTE_URL } from "@/lib/contact";
 
 export function Footer() {
   return (
@@ -27,6 +27,14 @@ export function Footer() {
           <p className="mt-6 max-w-md text-sm leading-relaxed text-muted-foreground">
             ООО ЯАР Групп поставщик CITROËN в Беларуси. Продажа, сервис, запчасти.
           </p>
+          <a
+            href={WARRANTY_PDF_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block text-sm tracking-wide text-muted-foreground transition-colors hover:text-gold"
+          >
+            Положение о гарантии
+          </a>
         </div>
 
         <div>

@@ -4,7 +4,7 @@ import { CARS } from "@/lib/cars";
 
 export function CarSwitcher({ active }: { active: Car["slug"] }) {
   return (
-    <div className="border-y border-border bg-muted/40">
+    <div className="car-switcher border-y border-border bg-muted/40">
       <div className="container mx-auto px-6 py-5">
         <div className="grid grid-cols-3 gap-3 md:gap-6">
           {CARS.map((c, i) => {
